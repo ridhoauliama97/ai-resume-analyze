@@ -1,4 +1,5 @@
 import { sql } from 'drizzle-orm';
+import type { AiResult } from '@/lib/ai/schema';
 import {
   boolean,
   check,
@@ -28,20 +29,6 @@ export const recommendationPriorityEnum = pgEnum('recommendation_priority', [
   'medium',
   'low',
 ]);
-
-export type StoredRecommendation = {
-  layer: 'global' | 'job';
-  category: string;
-  priority: 'high' | 'medium' | 'low';
-  title: string;
-  detail: string;
-  evidence: string;
-  example?: string | null;
-};
-
-export type StoredResultJson = {
-  recommendations: StoredRecommendation[];
-} & Record<string, unknown>;
 
 export const clients = pgTable('clients', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -74,7 +61,7 @@ export const analyses = pgTable(
     datasetConsent: boolean('dataset_consent').notNull().default(false),
     consentVersion: text('consent_version').notNull(),
     consentedAt: timestamp('consented_at', { withTimezone: true }).notNull(),
-    resultJson: jsonb('result_json').$type<StoredResultJson>().notNull(),
+    resultJson: jsonb('result_json').$type<AiResult>().notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [

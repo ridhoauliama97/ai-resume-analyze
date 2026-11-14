@@ -32,6 +32,13 @@ function record(clientId: string): NewAnalysisRecord {
     consentVersion: '2026-11-14',
     consentedAt: new Date('2026-11-14T10:00:00Z'),
     resultJson: {
+      categories: ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7'].map((code) => ({
+        code,
+        score: 80,
+        reason: `Alasan ${code}`,
+        evidence: `Bukti ${code}`,
+      })),
+      resumeMeta: { language: 'id', yearsExperienceEstimate: 6 },
       recommendations: [
         {
           layer: 'global',

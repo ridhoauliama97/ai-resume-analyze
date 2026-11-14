@@ -1,13 +1,8 @@
 import { and, desc, eq } from 'drizzle-orm';
+import type { AiResult } from '@/lib/ai/schema';
 import type { Band } from '@/lib/types';
 import type { Db } from './client';
-import {
-  analyses,
-  clients,
-  feedback,
-  recommendations,
-  type StoredResultJson,
-} from './schema';
+import { analyses, clients, feedback, recommendations } from './schema';
 
 export type Analysis = typeof analyses.$inferSelect;
 export type Recommendation = typeof recommendations.$inferSelect;
@@ -42,7 +37,7 @@ export type NewAnalysisRecord = {
   datasetConsent: boolean;
   consentVersion: string;
   consentedAt: Date;
-  resultJson: StoredResultJson;
+  resultJson: AiResult;
 };
 
 export async function upsertClient(db: Db, tokenHash: string): Promise<string> {
