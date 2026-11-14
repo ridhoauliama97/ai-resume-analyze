@@ -5,6 +5,7 @@ import { cn } from 'cn';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { DeleteAnalysisButton } from '@/components/delete-analysis-button';
 import { getCurrentAdmin } from '@/lib/auth/admin';
 import { getDb } from '@/lib/db/client';
 import { listAllAnalyses } from '@/lib/db/queries';
@@ -95,24 +96,7 @@ async function AdminDashboard() {
                       >
                         Lihat
                       </Link>
-                      <form
-                        action={`/api/admin/analyses/${analysis.id}`}
-                        method="post"
-                        onSubmit={(event) => {
-                          event.preventDefault();
-                          if (!window.confirm('Hapus analisis ini?')) return;
-                          fetch(`/api/admin/analyses/${analysis.id}`, { method: 'DELETE' }).then(() =>
-                            window.location.reload(),
-                          );
-                        }}
-                      >
-                        <button
-                          type="submit"
-                          className="text-sm text-destructive underline-offset-4 hover:underline"
-                        >
-                          Hapus
-                        </button>
-                      </form>
+                      <DeleteAnalysisButton analysisId={analysis.id} />
                     </div>
                   </td>
                 </tr>

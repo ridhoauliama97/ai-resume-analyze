@@ -45,6 +45,8 @@ export default defineConfig({
       GEMINI_API_KEY: 'test-key',
       GEMINI_MODEL: 'gemini-3.5-flash-lite',
       CLIENT_TOKEN_PEPPER: 'test-pepper-2026',
+      ADMIN_USERNAME: 'admin',
+      ADMIN_PASSWORD: 'change-me',
       TAVILY_API_KEY: '',
     },
   },

@@ -65,8 +65,8 @@ export async function handleAdminLogin(
   return response;
 }
 
-export function handleAdminLogout(secureCookies: boolean): NextResponse {
-  const response = NextResponse.json({ ok: true });
+export function handleAdminLogout(request: Request, secureCookies: boolean): NextResponse {
+  const response = NextResponse.redirect(new URL('/', request.url), 303);
   response.cookies.set(ADMIN_COOKIE, '', {
     httpOnly: true,
     sameSite: 'lax',
