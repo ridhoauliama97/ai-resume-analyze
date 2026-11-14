@@ -19,11 +19,6 @@ export function SiteHeader() {
                 Privasi
               </Link>
             </li>
-            <li>
-              <Link href="/admin" className="underline-offset-4 hover:underline">
-                Admin
-              </Link>
-            </li>
           </ul>
         </nav>
       </div>
