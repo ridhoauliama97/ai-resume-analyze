@@ -150,7 +150,7 @@ export function UploadForm() {
             />
           </div>
 
-          <div className="flex flex-col gap-3 rounded-lg border p-3">
+          <div className="flex flex-col gap-3 rounded-lg border bg-muted/40 p-4">
             <label className="flex items-start gap-3 text-sm">
               <Checkbox
                 aria-label="Persetujuan pemrosesan dan penyimpanan"
@@ -190,7 +190,7 @@ export function UploadForm() {
         </CardContent>
 
         <CardFooter className="mt-4 justify-end">
-          <Button type="submit" disabled={pending}>
+          <Button type="submit" disabled={pending} className="w-full sm:w-auto">
             {pending ? 'Menganalisis...' : 'Analisis Resume'}
           </Button>
         </CardFooter>
