@@ -171,3 +171,84 @@ export async function deleteAnalysisForClient(
 
   return deleted.length > 0;
 }
+
+export type SaveFeedbackInput = {
+  analysisId: string;
+  clientId: string;
+  recommendationId?: string;
+  rating?: -1 | 1;
+  comment?: string;
+};
+
+export async function saveFeedback(
+  db: Db,
+  input: SaveFeedbackInput,
+): Promise<'saved' | 'not_found' | 'invalid'> {
+  const [analysis] = await db
+    .select({ id: analyses.id })
+    .from(analyses)
+    .where(and(eq(analyses.id, input.analysisId), eq(analyses.clientId, input.clientId)))
+    .limit(1);
+
+  if (!analysis) {
+    return 'not_found';
+  }
+
+  let recommendationId: string | null = null;
+
+  if (input.recommendationId) {
+    const [recommendation] = await db
+      .select({ id: recommendations.id })
+      .from(recommendations)
+      .where(
+        and(
+          eq(recommendations.id, input.recommendationId),
+          eq(recommendations.analysisId, input.analysisId),
+        ),
+      )
+      .limit(1);
+
+    if (!recommendation) {
+      return 'invalid';
+    }
+
+    recommendationId = recommendation.id;
+  }
+
+  if (input.rating === undefined && input.comment === undefined) {
+    return 'invalid';
+  }
+
+  if (input.rating !== undefined) {
+    if (!recommendationId) {
+      return 'invalid';
+    }
+
+    await db
+      .insert(feedback)
+      .values({
+        analysisId: input.analysisId,
+        recommendationId,
+        rating: input.rating,
+        comment: input.comment ?? null,
+      })
+      .onConflictDoUpdate({
+        target: [feedback.analysisId, feedback.recommendationId],
+        set: {
+          rating: input.rating,
+          comment: input.comment ?? null,
+        },
+      });
+
+    return 'saved';
+  }
+
+  await db.insert(feedback).values({
+    analysisId: input.analysisId,
+    recommendationId,
+    rating: null,
+    comment: input.comment ?? null,
+  });
+
+  return 'saved';
+}
