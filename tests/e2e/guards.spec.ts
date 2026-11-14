@@ -27,3 +27,21 @@ test('privacy notice names Gemini and Tavily', async ({ page }) => {
   await expect(page.getByText(/Gemini/)).toBeVisible();
   await expect(page.getByText(/Tavily/)).toBeVisible();
 });
+
+test('admin can log in and open the dashboard', async ({ page }) => {
+  await page.goto('/auth/admin');
+
+  await page.getByLabel('Username').fill('admin');
+  await page.getByLabel('Password').fill('change-me');
+  await page.getByRole('button', { name: 'Masuk' }).click();
+
+  await page.waitForURL('/admin');
+  await expect(page.getByRole('heading', { name: 'Dashboard admin' })).toBeVisible();
+});
+
+test('non-admin history route redirects to the home page', async ({ page }) => {
+  await page.goto('/history');
+
+  await page.waitForURL('/');
+  await expect(page.getByRole('heading', { name: 'Nilai resume-mu sebelum dikirim.' })).toBeVisible();
+});

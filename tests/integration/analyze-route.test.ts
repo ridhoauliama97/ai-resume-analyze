@@ -247,6 +247,8 @@ test('rejects AI_MOCK in production', () => {
     GEMINI_API_KEY: 'test-key',
     GEMINI_MODEL: 'gemini-3.5-flash-lite',
     CLIENT_TOKEN_PEPPER: 'pepper',
+    ADMIN_USERNAME: 'admin',
+    ADMIN_PASSWORD: 'change-me',
     AI_MOCK: '1',
     NODE_ENV: 'production',
   } as const;
@@ -258,6 +260,8 @@ test('rejects AI_MOCK in production', () => {
       GEMINI_API_KEY: env.GEMINI_API_KEY,
       GEMINI_MODEL: env.GEMINI_MODEL,
       CLIENT_TOKEN_PEPPER: env.CLIENT_TOKEN_PEPPER,
+      ADMIN_USERNAME: env.ADMIN_USERNAME,
+      ADMIN_PASSWORD: env.ADMIN_PASSWORD,
       AI_MOCK: '1',
       NODE_ENV: 'production',
     }),

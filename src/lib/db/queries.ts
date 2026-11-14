@@ -159,6 +159,42 @@ export async function listAnalysesForClient(
     .orderBy(desc(analyses.createdAt));
 }
 
+export async function deleteAnalysisById(db: Db, id: string): Promise<boolean> {
+  const deleted = await db
+    .delete(analyses)
+    .where(eq(analyses.id, id))
+    .returning({ id: analyses.id });
+
+  return deleted.length > 0;
+}
+
+export async function getAnalysisById(db: Db, id: string): Promise<AnalysisDetail | null> {
+  const [analysis] = await db.select().from(analyses).where(eq(analyses.id, id)).limit(1);
+
+  if (!analysis) {
+    return null;
+  }
+
+  const [recommendationRows, feedbackRows] = await Promise.all([
+    db
+      .select()
+      .from(recommendations)
+      .where(eq(recommendations.analysisId, id))
+      .orderBy(recommendations.sortOrder),
+    db
+      .select()
+      .from(feedback)
+      .where(eq(feedback.analysisId, id))
+      .orderBy(desc(feedback.createdAt)),
+  ]);
+
+  return { ...analysis, recommendations: recommendationRows, feedback: feedbackRows };
+}
+
+export async function listAllAnalyses(db: Db): Promise<Analysis[]> {
+  return db.select().from(analyses).orderBy(desc(analyses.createdAt));
+}
+
 export async function deleteAnalysisForClient(
   db: Db,
   id: string,

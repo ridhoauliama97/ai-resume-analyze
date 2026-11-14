@@ -15,13 +15,13 @@ export function SiteHeader() {
               </Link>
             </li>
             <li>
-              <Link href="/history" className="underline-offset-4 hover:underline">
-                Riwayat
+              <Link href="/privacy" className="underline-offset-4 hover:underline">
+                Privasi
               </Link>
             </li>
             <li>
-              <Link href="/privacy" className="underline-offset-4 hover:underline">
-                Privasi
+              <Link href="/admin" className="underline-offset-4 hover:underline">
+                Admin
               </Link>
             </li>
           </ul>

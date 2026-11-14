@@ -6,6 +6,8 @@ const envSchema = z.object({
   GEMINI_MODEL: z.string().min(1).default('gemini-3.5-flash-lite'),
   TAVILY_API_KEY: z.string().optional(),
   CLIENT_TOKEN_PEPPER: z.string().min(1),
+  ADMIN_USERNAME: z.string().min(1).default('admin'),
+  ADMIN_PASSWORD: z.string().min(1).default('change-me'),
   AI_MOCK: z.enum(['0', '1']).optional(),
   NODE_ENV: z.enum(['development', 'test', 'production']).optional(),
 });

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('analyzes a resume, saves a vote, and deletes it from history', async ({ page }) => {
+test('analyzes a resume, saves a vote, and deletes it', async ({ page }) => {
   await page.goto('/');
 
   await page.getByLabel('Berkas resume').setInputFiles('tests/fixtures/resume.pdf');
@@ -17,6 +17,8 @@ test('analyzes a resume, saves a vote, and deletes it from history', async ({ pa
   await expect(page.getByText('Keyword & gap')).toBeVisible();
   await expect(page.getByText('PostgreSQL', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('TypeScript', { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Unduh laporan' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Salin prompt perbaikan' })).toBeVisible();
 
   const thumbsUp = page.getByRole('button', { name: 'Bermanfaat' }).first();
   await expect(thumbsUp).toHaveAttribute('aria-pressed', 'false');
@@ -29,13 +31,8 @@ test('analyzes a resume, saves a vote, and deletes it from history', async ({ pa
     'true',
   );
 
-  await page.getByRole('link', { name: 'Riwayat', exact: true }).click();
-  await page.waitForURL('/history');
-  await expect(page.getByRole('link', { name: 'resume.pdf' })).toBeVisible();
-
   page.on('dialog', (dialog) => dialog.accept());
   await page.getByRole('button', { name: 'Hapus analisis' }).click();
-
-  await expect(page.getByText('Belum ada analisis.')).toBeVisible();
-  await expect(page.getByRole('link', { name: 'resume.pdf' })).toHaveCount(0);
+  await page.waitForURL('/');
+  await expect(page.getByRole('heading', { name: 'Nilai resume-mu sebelum dikirim.' })).toBeVisible();
 });

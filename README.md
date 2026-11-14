@@ -15,7 +15,9 @@ yang tersimpan di PostgreSQL untuk peningkatan kualitas penilaian.
 - Band merah (<50), kuning (50–69), dan hijau (≥70), selalu disertai label teks.
 - Rekomendasi perbaikan dengan prioritas, bukti, dan contoh; vote thumbs up/down
   per rekomendasi dan komentar keseluruhan.
-- Riwayat anonim per browser (cookie), tanpa login.
+- Riwayat anonim per browser (cookie), tanpa login. Non-admin tidak melihat daftar
+  riwayat; admin dapat melihat seluruh riwayat di `/admin` (login `/auth/admin`).
+- Report memiliki tombol unduh (cetak/save as PDF) dan salin prompt perbaikan resume.
 - Halaman privasi yang menjelaskan pemrosesan Gemini/Tavily, retensi, izin dataset
   opsional, dan cara menghapus data.
 
@@ -48,6 +50,7 @@ Isi `.env.local`:
 - `GEMINI_API_KEY` dan `GEMINI_MODEL` (default `gemini-3.5-flash-lite`).
 - `TAVILY_API_KEY` bila ingin konteks pasar.
 - `CLIENT_TOKEN_PEPPER` dengan string acak panjang.
+- `ADMIN_USERNAME` dan `ADMIN_PASSWORD` untuk dashboard admin di `/admin`.
 - `AI_MOCK=0` untuk pemakaian normal. Jangan pernah memakai `AI_MOCK=1` di
   production.
 
