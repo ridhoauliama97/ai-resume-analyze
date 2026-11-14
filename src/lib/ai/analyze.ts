@@ -72,7 +72,14 @@ export async function runAnalysis(
     marketContext,
   });
 
-  const parsed = parseAiResult(await deps.generateJson(prompt));
+  let parsed: AiResult;
+
+  try {
+    parsed = parseAiResult(await deps.generateJson(prompt));
+  } catch {
+    // Spec §17: one corrective retry before failing when AI JSON is invalid.
+    parsed = parseAiResult(await deps.generateJson(prompt));
+  }
   const globalScore = weightedScore(parsed.categories, GLOBAL_WEIGHTS);
 
   if (globalScore === null) {

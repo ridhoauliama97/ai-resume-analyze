@@ -175,6 +175,20 @@ Jalankan setelah perubahan prompt/model dengan API asli:
 5. Bila kriteria gagal, tinjau prompt/rubrik. Bila perlu, naikkan `GEMINI_MODEL`
    ke model yang lebih kuat dan ulangi evaluasi.
 
+## Catatan deployment
+
+- `AI_MOCK=1` hanya untuk pengembangan/pengujian; `buildAnalyzeDeps` menolaknya di
+  `NODE_ENV=production`.
+- Cookie `ra_client` ditandai `Secure` hanya di production. Pastikan aplikasi
+  berjalan di balik HTTPS.
+- `CLIENT_TOKEN_PEPPER` harus berupa string acak panjang; hash token memakai
+  HMAC-SHA256.
+- Pembatasan laju per-IP mempercayai header `X-Forwarded-For`. Di balik proxy,
+  pastikan proxy menimpa header tersebut (bukan meneruskannya mentah) agar klien
+  tidak bisa memalsukan IP. `X-Real-IP` dipakai bila tersedia.
+- Cookieless (permintaan pertama) tunduk pada pembatasan laju per-IP; setelah
+  cookie terbit, pembatasan per-klien juga berlaku.
+
 ## Struktur singkat
 
 ```

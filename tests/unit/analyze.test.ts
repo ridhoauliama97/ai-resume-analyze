@@ -178,3 +178,37 @@ test('createMockGenerator returns a schema-valid payload with deterministic scor
   expect(outcome.jobScore).toBe(74);
   expect(outcome.overallScore).toBe(79);
 });
+
+test('retries once when the model returns invalid JSON', async () => {
+  let calls = 0;
+  const searchMarket = vi.fn(async () => null);
+
+  const outcome = await runAnalysis(
+    { resumeText: 'Resume contoh.' },
+    {
+      generateJson: async () => {
+        calls += 1;
+        if (calls === 1) {
+          return { not: 'valid' };
+        }
+        return payload();
+      },
+      searchMarket,
+    },
+  );
+
+  expect(calls).toBe(2);
+  expect(outcome.globalScore).toBe(80);
+});
+
+test('throws when invalid JSON persists after the retry', async () => {
+  await expect(
+    runAnalysis(
+      { resumeText: 'Resume contoh.' },
+      {
+        generateJson: async () => ({ not: 'valid' }),
+        searchMarket: async () => null,
+      },
+    ),
+  ).rejects.toThrow();
+});

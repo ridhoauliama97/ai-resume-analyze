@@ -48,13 +48,24 @@ function textField(form: FormData, name: string): string | null {
 }
 
 function sanitizeFileName(name: string): string {
-  const base = name.split(/[\\/]/).pop()?.trim() || 'resume';
-  return base.slice(0, 255);
+  const base = name.split(/[\/]/).pop()?.trim() || 'resume';
+  const cleaned = base.replace(/[\u0000-\u001f\u007f]/g, '').replace(/\s+/g, ' ').trim();
+  return (cleaned || 'resume').slice(0, 255);
 }
 
 function clientIp(request: Request): string {
   const forwarded = request.headers.get('x-forwarded-for');
-  return forwarded?.split(',')[0]?.trim() || 'unknown';
+  if (forwarded) {
+    const ips = forwarded
+      .split(',')
+      .map((part) => part.trim())
+      .filter((part) => part.length > 0);
+    if (ips.length > 0) {
+      return ips[ips.length - 1];
+    }
+  }
+
+  return request.headers.get('x-real-ip')?.trim() || 'unknown';
 }
 
 const PARSE_ERROR_MESSAGES: Record<ResumeParseError['code'], string> = {

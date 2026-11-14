@@ -253,7 +253,7 @@ mengembalikan pesan aman yang bisa ditampilkan. User mengulang dari halaman uplo
 ```
 clients
   id uuid pk
-  token_hash text unique not null      -- SHA-256(token + pepper)
+  token_hash text unique not null      -- HMAC-SHA256(token, pepper)
   created_at timestamptz
   last_seen_at timestamptz
 

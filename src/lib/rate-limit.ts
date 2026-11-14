@@ -13,6 +13,15 @@ export function createRateLimiter(opts: {
   return {
     check(key: string): boolean {
       const current = now();
+
+      if (entries.size > 5_000) {
+        for (const [storedKey, storedEntry] of entries) {
+          if (current >= storedEntry.resetAt) {
+            entries.delete(storedKey);
+          }
+        }
+      }
+
       const entry = entries.get(key);
 
       if (!entry || current >= entry.resetAt) {
