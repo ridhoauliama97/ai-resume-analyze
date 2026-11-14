@@ -16,7 +16,7 @@ test('allows the limit, rejects the next call, and resets after the window', () 
 });
 
 test('keeps separate quotas per key', () => {
-  let now = 0;
+  const now = 0;
   const limiter = createRateLimiter({ limit: 2, windowMs: 1_000, now: () => now });
 
   expect(limiter.check('client-a')).toBe(true);
