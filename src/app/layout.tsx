@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 import Link from "next/link";
@@ -41,7 +42,7 @@ export const metadata: Metadata = {
     "Nilai resume terhadap standar ATS dan posisi target, lengkap dengan saran perbaikan yang konkret.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="id" className={`${roboto.variable} h-full antialiased`}>
       <body className={`${roboto.className} min-h-full flex flex-col`}>
