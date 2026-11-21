@@ -1,0 +1,1 @@
+CREATE INDEX "feedback_recommendation_idx" ON "feedback" USING btree ("recommendation_id");

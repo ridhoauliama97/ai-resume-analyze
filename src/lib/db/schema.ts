@@ -104,6 +104,7 @@ export const feedback = pgTable(
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [
+    index('feedback_recommendation_idx').on(table.recommendationId),
     uniqueIndex('feedback_analysis_recommendation_unique').on(
       table.analysisId,
       table.recommendationId,

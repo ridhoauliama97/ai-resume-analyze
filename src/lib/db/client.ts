@@ -5,7 +5,13 @@ import * as schema from './schema';
 export type Db = PostgresJsDatabase<typeof schema>;
 
 export function createDb(url: string): { db: Db; close: () => Promise<void> } {
-  const client = postgres(url, { max: 10 });
+  // `prepare: false` keeps postgres-js compatible with Supabase transaction
+  // pooling (PgBouncer), where prepared statements are not connection-scoped.
+  const max = Number(process.env.DB_MAX_CONNECTIONS ?? 3);
+  const client = postgres(url, {
+    max: Number.isFinite(max) && max > 0 ? max : 3,
+    prepare: false,
+  });
   return {
     db: drizzle(client, { schema }),
     close: async () => {

@@ -178,6 +178,28 @@ Jalankan setelah perubahan prompt/model dengan API asli:
 5. Bila kriteria gagal, tinjau prompt/rubrik. Bila perlu, naikkan `GEMINI_MODEL`
    ke model yang lebih kuat dan ulangi evaluasi.
 
+## Deploy ke Vercel + Supabase
+
+1. Buat project Supabase, lalu buka **Connect → Transaction pooler**. Salin
+   connection string IPv4 port `6543` (bukan direct connection yang IPv6-only).
+2. Terapkan migrasi ke database Supabase:
+   ```bash
+   DATABASE_URL="<transaction-pooler-url>" npm run db:migrate
+   ```
+3. Import repo ke Vercel, lalu set environment variables berikut di
+   **Project Settings → Environment Variables**:
+   - `DATABASE_URL` — transaction pooler Supabase
+   - `GEMINI_API_KEY`, `GEMINI_MODEL`, `TAVILY_API_KEY`
+   - `CLIENT_TOKEN_PEPPER` — string acak panjang
+   - `ADMIN_USERNAME`, `ADMIN_PASSWORD` — kredensial admin
+   - `DB_MAX_CONNECTIONS=3`
+   - `AI_MOCK=0`
+4. Deploy. Buka `/auth/admin`, login, lalu cek `/admin`.
+
+`postgres-js` dikonfigurasi dengan `prepare: false` agar kompatibel dengan
+transaction pooling Supabase. Hanya admin yang memiliki akses ke dashboard
+riwayat; tidak ada registrasi user biasa.
+
 ## Catatan deployment
 
 - `AI_MOCK=1` hanya untuk pengembangan/pengujian; `buildAnalyzeDeps` menolaknya di
