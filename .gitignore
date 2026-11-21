@@ -1,6 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+# ---------------------------------------------------------------------------
+# Dependencies
+# ---------------------------------------------------------------------------
 /node_modules
 /.pnp
 .pnp.*
@@ -10,42 +12,78 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
+# ---------------------------------------------------------------------------
+# Testing and build artifacts
+# ---------------------------------------------------------------------------
+/coverage/
 /test-results/
 /playwright-report/
 /blob-report/
-
-# next.js
+/playwright/.cache/
 /.next/
 /out/
+/build/
+/dist/
+/.turbo/
+/.cache/
 
-# production
-/build
-
-# misc
-.DS_Store
+# ---------------------------------------------------------------------------
+# Environment and secrets
+# ---------------------------------------------------------------------------
+# Never commit real env files. Keep .env.example as the only tracked template.
+.env*
+!.env.example
 *.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
 
-# debug
+# ---------------------------------------------------------------------------
+# Local databases
+# ---------------------------------------------------------------------------
+*.sqlite
+*.sqlite3
+*.db
+
+# ---------------------------------------------------------------------------
+# Debug logs
+# ---------------------------------------------------------------------------
+*.log
+/logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
-!.env.example
+# ---------------------------------------------------------------------------
+# OS / editor files
+# ---------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.swp
+*~
 
-# superpowers scratch
+# ---------------------------------------------------------------------------
+# Deployment / tooling state
+# ---------------------------------------------------------------------------
+/.vercel/
+/.worktrees/
+.supabase/
+/supabase/.temp/
+/supabase/.branches/
+
+# ---------------------------------------------------------------------------
+# Superpowers scratch
+# ---------------------------------------------------------------------------
 .superpowers/
 
-# worktrees
-/.worktrees/
-
-# vercel
-.vercel
-
-# typescript
+# ---------------------------------------------------------------------------
+# TypeScript
+# ---------------------------------------------------------------------------
 *.tsbuildinfo
 next-env.d.ts
