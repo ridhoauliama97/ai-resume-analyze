@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { FileText } from 'lucide-react';
-import { useSiteSettings } from '@/components/site-settings-provider';
+import { FileText } from "lucide-react";
+import { useSiteSettings } from "@/components/site-settings-provider";
 
 export function SiteBrand() {
   const { settings } = useSiteSettings();
@@ -15,7 +15,10 @@ export function SiteBrand() {
           style={{ backgroundImage: `url(${settings.logoUrl})` }}
         />
       ) : (
-        <FileText aria-hidden="true" className="size-6 shrink-0 text-muted-foreground" />
+        <FileText
+          aria-hidden="true"
+          className="size-6 shrink-0 text-muted-foreground"
+        />
       )}
       <span className="truncate text-sm font-semibold tracking-tight">
         {settings.siteName}

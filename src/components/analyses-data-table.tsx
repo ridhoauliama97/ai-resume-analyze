@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useMemo, useState, type ReactNode } from 'react';
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useMemo, useState, type ReactNode } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -15,7 +15,7 @@ import {
   type PaginationState,
   type SortingState,
   type Table as TanStackTable,
-} from '@tanstack/react-table';
+} from "@tanstack/react-table";
 import {
   ArrowDownIcon,
   ArrowUpDownIcon,
@@ -26,7 +26,7 @@ import {
   SearchIcon,
   Trash2Icon,
   XIcon,
-} from 'lucide-react';
+} from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,24 +37,24 @@ import {
   AlertDialogHeader,
   AlertDialogMedia,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { BandBadge } from '@/components/band-badge';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+} from "@/components/ui/alert-dialog";
+import { BandBadge } from "@/components/band-badge";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from '@/components/ui/empty';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/empty";
+import { Input } from "@/components/ui/input";
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
-} from '@/components/ui/pagination';
+} from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -62,7 +62,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -70,22 +70,24 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { toast } from '@/components/ui/toast';
-import { DeleteAnalysisButton } from '@/components/delete-analysis-button';
-import { formatDateId, formatDateTimeId, formatScore } from '@/lib/format';
-import type { AdminAnalysisRow } from '@/lib/types';
+} from "@/components/ui/table";
+import { toast } from "@/components/ui/toast";
+import { DeleteAnalysisButton } from "@/components/delete-analysis-button";
+import { formatDateId, formatDateTimeId, formatScore } from "@/lib/format";
+import type { AdminAnalysisRow } from "@/lib/types";
 
 const PAGE_SIZES = [10, 25, 50, 100];
 
 const searchFilter: FilterFn<AdminAnalysisRow> = (row, _columnId, value) => {
-  const needle = String(value ?? '').trim().toLowerCase();
+  const needle = String(value ?? "")
+    .trim()
+    .toLowerCase();
   return needle.length === 0 || row.original.searchText.includes(needle);
 };
 
 type SortableColumn = {
   getCanSort: () => boolean;
-  getIsSorted: () => false | 'asc' | 'desc';
+  getIsSorted: () => false | "asc" | "desc";
   getToggleSortingHandler: () => ((event: unknown) => void) | undefined;
 };
 
@@ -111,9 +113,9 @@ function ColumnHeader({
       onClick={column.getToggleSortingHandler()}
     >
       {children}
-      {sorted === 'asc' ? (
+      {sorted === "asc" ? (
         <ArrowUpIcon data-icon="inline-end" aria-hidden="true" />
-      ) : sorted === 'desc' ? (
+      ) : sorted === "desc" ? (
         <ArrowDownIcon data-icon="inline-end" aria-hidden="true" />
       ) : (
         <ArrowUpDownIcon data-icon="inline-end" aria-hidden="true" />
@@ -123,24 +125,29 @@ function ColumnHeader({
 }
 
 function columnClass(columnId: string): string | undefined {
-  if (columnId === 'createdAt') {
-    return 'hidden sm:table-cell';
+  if (columnId === "createdAt") {
+    return "hidden sm:table-cell";
   }
-  if (columnId === 'targetPosition') {
-    return 'hidden md:table-cell';
+  if (columnId === "targetPosition") {
+    return "hidden md:table-cell";
   }
-  if (columnId === 'band') {
-    return 'hidden sm:table-cell';
+  if (columnId === "band") {
+    return "hidden sm:table-cell";
   }
-  if (columnId === 'datasetConsent') {
-    return 'hidden lg:table-cell';
+  if (columnId === "datasetConsent") {
+    return "hidden lg:table-cell";
   }
   return undefined;
 }
 
-function SelectAllCheckbox({ table }: { table: TanStackTable<AdminAnalysisRow> }) {
+function SelectAllCheckbox({
+  table,
+}: {
+  table: TanStackTable<AdminAnalysisRow>;
+}) {
   const rows = table.getFilteredRowModel().rows;
-  const allSelected = rows.length > 0 && rows.every((row) => row.getIsSelected());
+  const allSelected =
+    rows.length > 0 && rows.every((row) => row.getIsSelected());
   const someSelected = !allSelected && rows.some((row) => row.getIsSelected());
 
   return (
@@ -168,9 +175,9 @@ function SelectAllCheckbox({ table }: { table: TanStackTable<AdminAnalysisRow> }
 export function AnalysesDataTable({ data }: { data: AdminAnalysisRow[] }) {
   const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([
-    { id: 'createdAt', desc: true },
+    { id: "createdAt", desc: true },
   ]);
-  const [globalFilter, setGlobalFilter] = useState('');
+  const [globalFilter, setGlobalFilter] = useState("");
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -182,7 +189,7 @@ export function AnalysesDataTable({ data }: { data: AdminAnalysisRow[] }) {
   const columns = useMemo<ColumnDef<AdminAnalysisRow>[]>(
     () => [
       {
-        id: 'select',
+        id: "select",
         header: ({ table }) => <SelectAllCheckbox table={table} />,
         cell: ({ row }) => (
           <Checkbox
@@ -196,7 +203,7 @@ export function AnalysesDataTable({ data }: { data: AdminAnalysisRow[] }) {
         enableHiding: false,
       },
       {
-        accessorKey: 'fileName',
+        accessorKey: "fileName",
         header: ({ column }) => (
           <ColumnHeader column={column}>Berkas</ColumnHeader>
         ),
@@ -207,7 +214,7 @@ export function AnalysesDataTable({ data }: { data: AdminAnalysisRow[] }) {
             </span>
             <span className="flex min-w-0 flex-col">
               <span
-                className="block max-w-[120px] truncate font-medium sm:max-w-[260px]"
+                className="block max-w-30 truncate font-medium sm:max-w-65"
                 title={row.original.fileName}
               >
                 {row.original.fileName}
@@ -220,7 +227,7 @@ export function AnalysesDataTable({ data }: { data: AdminAnalysisRow[] }) {
         ),
       },
       {
-        accessorKey: 'createdAt',
+        accessorKey: "createdAt",
         header: ({ column }) => (
           <ColumnHeader column={column}>Tanggal</ColumnHeader>
         ),
@@ -234,43 +241,47 @@ export function AnalysesDataTable({ data }: { data: AdminAnalysisRow[] }) {
         ),
       },
       {
-        accessorKey: 'targetPosition',
+        accessorKey: "targetPosition",
         header: ({ column }) => (
           <ColumnHeader column={column}>Posisi</ColumnHeader>
         ),
         cell: ({ row }) => (
           <span className="text-muted-foreground">
-            {row.original.targetPosition || '—'}
+            {row.original.targetPosition || "—"}
           </span>
         ),
       },
       {
-        accessorKey: 'overallScore',
+        accessorKey: "overallScore",
         header: ({ column }) => (
           <ColumnHeader column={column}>Skor</ColumnHeader>
         ),
         cell: ({ row }) => (
-          <span className="tabular-nums">{formatScore(row.original.overallScore)}</span>
+          <span className="tabular-nums">
+            {formatScore(row.original.overallScore)}
+          </span>
         ),
       },
       {
-        accessorKey: 'band',
-        header: () => <span className="px-2">Band</span>,
+        accessorKey: "band",
+        header: () => <span className="px-2">Kategori Hasil</span>,
         cell: ({ row }) => <BandBadge band={row.original.band} />,
         enableSorting: false,
       },
       {
-        accessorKey: 'datasetConsent',
+        accessorKey: "datasetConsent",
         header: () => <span className="px-2">Dataset</span>,
         cell: ({ row }) => (
-          <Badge variant={row.original.datasetConsent ? 'secondary' : 'outline'}>
-            {row.original.datasetConsent ? 'Ya' : 'Tidak'}
+          <Badge
+            variant={row.original.datasetConsent ? "secondary" : "outline"}
+          >
+            {row.original.datasetConsent ? "Ya" : "Tidak"}
           </Badge>
         ),
         enableSorting: false,
       },
       {
-        id: 'actions',
+        id: "actions",
         header: () => <span className="sr-only">Aksi</span>,
         cell: ({ row }) => (
           <div className="flex items-center justify-end gap-2">
@@ -337,21 +348,24 @@ export function AnalysesDataTable({ data }: { data: AdminAnalysisRow[] }) {
     try {
       const deleted = await toast.promise(
         (async () => {
-          const response = await fetch('/api/admin/analyses', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+          const response = await fetch("/api/admin/analyses", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ids }),
           });
-          const payload = (await response.json().catch(() => null)) as
-            | { deleted?: number; error?: { message?: string } }
-            | null;
+          const payload = (await response.json().catch(() => null)) as {
+            deleted?: number;
+            error?: { message?: string };
+          } | null;
 
           if (!response.ok) {
-            throw new Error(payload?.error?.message ?? 'Analisis gagal dihapus.');
+            throw new Error(
+              payload?.error?.message ?? "Analisis gagal dihapus.",
+            );
           }
 
-          if (typeof payload?.deleted !== 'number') {
-            throw new Error('Respons hapus tidak valid.');
+          if (typeof payload?.deleted !== "number") {
+            throw new Error("Respons hapus tidak valid.");
           }
 
           return payload.deleted;
@@ -360,7 +374,7 @@ export function AnalysesDataTable({ data }: { data: AdminAnalysisRow[] }) {
           loading: `Menghapus ${ids.length} analisis...`,
           success: (count) => `${count} analisis dihapus.`,
           error: (cause) =>
-            cause instanceof Error ? cause.message : 'Analisis gagal dihapus.',
+            cause instanceof Error ? cause.message : "Analisis gagal dihapus.",
         },
       );
 
@@ -370,7 +384,7 @@ export function AnalysesDataTable({ data }: { data: AdminAnalysisRow[] }) {
       return deleted;
     } catch (cause) {
       setBulkError(
-        cause instanceof Error ? cause.message : 'Analisis gagal dihapus.',
+        cause instanceof Error ? cause.message : "Analisis gagal dihapus.",
       );
     } finally {
       setBulkPending(false);
@@ -386,7 +400,8 @@ export function AnalysesDataTable({ data }: { data: AdminAnalysisRow[] }) {
           </EmptyMedia>
           <EmptyTitle>Belum ada analisis</EmptyTitle>
           <EmptyDescription>
-            Analisis user akan muncul di sini setelah ada yang mengunggah resume.
+            Analisis user akan muncul di sini setelah ada yang mengunggah
+            resume.
           </EmptyDescription>
         </EmptyHeader>
       </Empty>
@@ -446,7 +461,8 @@ export function AnalysesDataTable({ data }: { data: AdminAnalysisRow[] }) {
             </EmptyMedia>
             <EmptyTitle>Tidak ada hasil</EmptyTitle>
             <EmptyDescription>
-              Tidak ada analisis yang cocok dengan pencarian &quot;{globalFilter}&quot;.
+              Tidak ada analisis yang cocok dengan pencarian &quot;
+              {globalFilter}&quot;.
             </EmptyDescription>
           </EmptyHeader>
         </Empty>
@@ -476,14 +492,17 @@ export function AnalysesDataTable({ data }: { data: AdminAnalysisRow[] }) {
               {table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() ? 'selected' : undefined}
+                  data-state={row.getIsSelected() ? "selected" : undefined}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
                       className={columnClass(cell.column.id)}
                     >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -591,7 +610,7 @@ export function AnalysesDataTable({ data }: { data: AdminAnalysisRow[] }) {
               onClick={onBulkDelete}
               disabled={bulkPending}
             >
-              {bulkPending ? 'Menghapus...' : 'Hapus semua'}
+              {bulkPending ? "Menghapus..." : "Hapus semua"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
