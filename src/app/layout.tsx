@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-
+import { Analytics } from "@vercel/analytics/next";
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
@@ -63,6 +63,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </Link>
           </div>
         </footer>
+        <Analytics />
       </body>
     </html>
   );
