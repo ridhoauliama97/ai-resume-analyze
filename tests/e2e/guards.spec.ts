@@ -18,11 +18,13 @@ test('shows a scan warning for a short PDF', async ({ page }) => {
     .check();
   await page.getByRole('button', { name: 'Analisis Resume' }).click();
 
-  await expect(page.getByText(/scan/i)).toBeVisible();
+  await expect(page.getByText(/scan/i).first()).toBeVisible();
 });
 
 test('privacy notice names Gemini and Tavily', async ({ page }) => {
   await page.goto('/privacy');
+
+  await page.getByRole('button', { name: 'Cara data diproses' }).click();
 
   await expect(page.getByText(/Gemini/)).toBeVisible();
   await expect(page.getByText(/Tavily/)).toBeVisible();

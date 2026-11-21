@@ -4,9 +4,10 @@ export const PRIVACY_SECTIONS: { title: string; body: string }[] = [
     body:
       'Kami menyimpan nama dan tipe berkas, ukuran berkas, teks resume yang berhasil diekstrak, ' +
       'posisi target dan job description bila Anda mengisinya, skor beserta rincian kategori, ' +
-      'rekomendasi perbaikan, serta feedback yang Anda berikan. Untuk mengaitkan report tanpa ' +
-      'login, kami memakai cookie klien anonim yang berisi token acak; token tersebut disimpan ' +
-      'sebagai hash, bukan teks asli.',
+      'rekomendasi perbaikan, serta feedback yang Anda berikan. Berkas asli yang Anda unggah ' +
+      'disimpan di Supabase Storage privat. Untuk mengaitkan report tanpa login, kami memakai ' +
+      'cookie klien anonim yang berisi token acak; token tersebut disimpan sebagai hash, bukan ' +
+      'teks asli.',
   },
   {
     title: 'Cara data diproses',
@@ -39,9 +40,10 @@ export const PRIVACY_SECTIONS: { title: string; body: string }[] = [
     title: 'Cara menghapus data',
     body:
       'Anda dapat menghapus analisis kapan saja dari halaman report. Admin dapat menghapusnya ' +
-      'dari dashboard. Menghapus analisis juga menghapus rekomendasi dan feedback terkait secara ' +
-      'permanen. Cookie klien anonim tetap tersimpan agar report lain tetap bisa dibuka; ' +
-      'menghapus cookie tersebut di browser akan memutus akses ke report lama.',
+      'dari dashboard. Menghapus analisis juga menghapus rekomendasi, feedback, dan berkas asli ' +
+      'dari Supabase Storage secara permanen. Cookie klien anonim tetap tersimpan agar report ' +
+      'lain tetap bisa dibuka; menghapus cookie tersebut di browser akan memutus akses ke ' +
+      'report lama.',
   },
   {
     title: 'Data sensitif',

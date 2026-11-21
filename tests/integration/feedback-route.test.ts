@@ -10,6 +10,7 @@ import {
   type NewAnalysisRecord,
 } from '@/lib/db/queries';
 import { resetDb, testDb } from './helpers';
+import { createMemoryStorage } from './storage-fake';
 
 const PEPPER = 'feedback-test-pepper';
 
@@ -20,6 +21,7 @@ function record(clientId: string): NewAnalysisRecord {
     fileType: 'application/pdf',
     fileSize: 1024,
     resumeText: 'Ahmad Pratama — Frontend Engineer dengan pengalaman 6 tahun.',
+    resumeFileKey: 'clients/test/resume.pdf',
     targetPosition: null,
     jobDescription: null,
     marketContext: null,
@@ -76,7 +78,7 @@ async function seed(token: string): Promise<{ id: string; recommendationIds: str
 }
 
 function deps(): ReadHandlerDeps {
-  return { db: testDb, pepper: PEPPER };
+  return { db: testDb, pepper: PEPPER, storage: createMemoryStorage().storage };
 }
 
 function request(id: string, body: unknown, token?: string): Request {

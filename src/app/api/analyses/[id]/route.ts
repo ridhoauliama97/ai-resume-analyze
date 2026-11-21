@@ -5,10 +5,15 @@ import {
 } from '@/lib/api/read-handlers';
 import { getDb } from '@/lib/db/client';
 import { getServerEnv } from '@/lib/env';
+import { createResumeStorageFromEnv } from '@/lib/storage';
 
 function deps(): ReadHandlerDeps {
   const env = getServerEnv();
-  return { db: getDb(), pepper: env.CLIENT_TOKEN_PEPPER };
+  return {
+    db: getDb(),
+    pepper: env.CLIENT_TOKEN_PEPPER,
+    storage: createResumeStorageFromEnv(env),
+  };
 }
 
 type RouteContext = { params: Promise<{ id: string }> };

@@ -6,6 +6,7 @@ import { getDb } from '@/lib/db/client';
 import { getServerEnv, type ServerEnv } from '@/lib/env';
 import { parseResumeFile } from '@/lib/parsing';
 import { createRateLimiter, type RateLimiter } from '@/lib/rate-limit';
+import { createNoopResumeStorage, createResumeStorageFromEnv } from '@/lib/storage';
 import type { AnalyzeHandlerDeps } from './analyze-handler';
 
 let limiters: { client: RateLimiter; ip: RateLimiter } | null = null;
@@ -33,6 +34,7 @@ export function buildAnalyzeDeps(env: ServerEnv = getServerEnv()): AnalyzeHandle
   const searchMarket = mock
     ? async () => null
     : createTavilySearcher({ apiKey: env.TAVILY_API_KEY });
+  const storage = mock ? createNoopResumeStorage() : createResumeStorageFromEnv(env);
 
   return {
     db: getDb(),
@@ -40,6 +42,7 @@ export function buildAnalyzeDeps(env: ServerEnv = getServerEnv()): AnalyzeHandle
     parseFile: parseResumeFile,
     clientLimiter: getLimiters().client,
     ipLimiter: getLimiters().ip,
+    storage,
     pepper: env.CLIENT_TOKEN_PEPPER,
     model: env.GEMINI_MODEL,
     secureCookies: env.NODE_ENV === 'production',

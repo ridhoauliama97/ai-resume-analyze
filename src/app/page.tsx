@@ -1,25 +1,25 @@
-import Link from 'next/link';
-import { ArrowRight, FileText, Gauge, Sparkles } from 'lucide-react';
-import { UploadForm } from '@/components/upload-form';
+import Link from "next/link";
+import { ArrowRight, FileText, Gauge, Sparkles } from "lucide-react";
+import { UploadForm } from "@/components/upload-form";
 
 const FEATURES = [
   {
     icon: Gauge,
-    title: 'Skor 0–100 yang jujur',
+    title: "Skor 0–100 yang jujur",
     description:
-      'Tujuh kategori ATS dengan bobot tetap, dihitung server-side. Band merah, kuning, hijau selalu disertai label teks.',
+      "Tujuh kategori ATS dengan bobot tetap, dihitung server-side. Band merah, kuning, hijau selalu disertai label teks.",
   },
   {
     icon: FileText,
-    title: 'Rincian & bukti',
+    title: "Rincian & bukti",
     description:
-      'Setiap kategori punya skor, alasan, dan kutipan dari resume. Rekomendasi prioritas dengan contoh konkret.',
+      "Setiap kategori punya skor, alasan, dan kutipan dari resume. Rekomendasi prioritas dengan contoh konkret.",
   },
   {
     icon: Sparkles,
-    title: 'Job-specific opsional',
+    title: "Job-specific opsional",
     description:
-      'Tambahkan posisi target atau job description untuk penilaian relevansi, keyword gap, dan must-have yang hilang.',
+      "Tambahkan posisi target atau job description untuk penilaian relevansi, keyword gap, dan must-have yang hilang.",
   },
 ];
 
@@ -28,14 +28,15 @@ export default function Home() {
     <main className="mx-auto flex w-full max-w-5xl flex-col gap-16 px-4 py-12 sm:px-6 sm:py-16">
       <section className="flex flex-col items-center gap-6 text-center">
         <span className="rounded-full border bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground">
-          AI Resume Analyzer
+          Smart Resume Analyze
         </span>
         <h1 className="max-w-3xl text-4xl font-semibold tracking-tight sm:text-6xl">
           Nilai resume-mu sebelum dikirim.
         </h1>
         <p className="max-w-2xl text-base text-muted-foreground sm:text-lg">
-          Dapatkan skor 0–100, rincian per kategori, dan saran perbaikan yang konkret.
-          Tambahkan posisi target atau job description untuk penilaian yang lebih spesifik.
+          Dapatkan skor 0–100, rincian per kategori, dan saran perbaikan yang
+          konkret. Tambahkan posisi target atau job description untuk penilaian
+          yang lebih spesifik.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3">
           <a
@@ -78,16 +79,19 @@ export default function Home() {
             Unggah resume
           </h2>
           <p className="text-sm text-muted-foreground">
-            PDF, DOCX, atau DOC — maksimal 10 MB. Hasil analisis bisa diunduh dan
-            prompt perbaikannya bisa disalin.
+            PDF, DOCX, atau DOC — maksimal 10 MB. Hasil analisis bisa diunduh
+            dan prompt perbaikannya bisa disalin.
           </p>
         </div>
         <UploadForm />
       </section>
 
       <p className="text-center text-xs text-muted-foreground">
-        Jangan unggah dokumen dengan data sensitif yang tidak perlu, seperti nomor
-        identitas. Hasil analisis bersifat saran, bukan jaminan lolos seleksi.
+        Jangan unggah dokumen dengan data sensitif yang tidak perlu, seperti
+        nomor identitas. <br />
+        <strong>
+          Hasil analisis bersifat saran, bukan jaminan lolos seleksi.
+        </strong>
       </p>
     </main>
   );

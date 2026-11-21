@@ -24,6 +24,7 @@ export type NewAnalysisRecord = {
   fileType: string;
   fileSize: number;
   resumeText: string;
+  resumeFileKey: string | null;
   targetPosition: string | null;
   jobDescription: string | null;
   marketContext: string | null;
@@ -73,6 +74,7 @@ export async function createAnalysis(db: Db, record: NewAnalysisRecord): Promise
         fileType: record.fileType,
         fileSize: record.fileSize,
         resumeText: record.resumeText,
+        resumeFileKey: record.resumeFileKey,
         targetPosition: record.targetPosition,
         jobDescription: record.jobDescription,
         marketContext: record.marketContext,

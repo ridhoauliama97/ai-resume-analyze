@@ -129,6 +129,26 @@
   }
 }
 
+[data-slot="attachment"][data-state="processing"] [data-slot="attachment-title"],
+[data-slot="attachment"][data-state="uploading"] [data-slot="attachment-title"] {
+  background: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  -webkit-text-fill-color: currentColor !important;
+  color: var(--muted-foreground) !important;
+  animation: attachment-title-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes attachment-title-shimmer {
+  0%,
+  100% {
+    color: var(--muted-foreground);
+  }
+  50% {
+    color: var(--foreground);
+  }
+}
+
 @page {
   margin: 16mm;
 }

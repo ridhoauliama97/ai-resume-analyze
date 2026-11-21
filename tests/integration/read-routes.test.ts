@@ -14,6 +14,7 @@ import {
   type NewAnalysisRecord,
 } from '@/lib/db/queries';
 import { resetDb, testDb } from './helpers';
+import { createMemoryStorage } from './storage-fake';
 
 const PEPPER = 'read-test-pepper';
 
@@ -24,6 +25,7 @@ function record(clientId: string, fileName = 'resume.pdf'): NewAnalysisRecord {
     fileType: 'application/pdf',
     fileSize: 1024,
     resumeText: 'Ahmad Pratama — Frontend Engineer dengan pengalaman 6 tahun.',
+    resumeFileKey: 'clients/test/resume.pdf',
     targetPosition: 'Frontend Engineer',
     jobDescription: null,
     marketContext: null,
@@ -72,8 +74,10 @@ async function seed(token: string, fileName?: string): Promise<string> {
   return createAnalysis(testDb, record(clientId, fileName));
 }
 
+let memoryStorage: ReturnType<typeof createMemoryStorage>;
+
 function deps(): ReadHandlerDeps {
-  return { db: testDb, pepper: PEPPER };
+  return { db: testDb, pepper: PEPPER, storage: memoryStorage.storage };
 }
 
 function request(token?: string): Request {
@@ -84,6 +88,7 @@ function request(token?: string): Request {
 
 beforeEach(async () => {
   await resetDb();
+  memoryStorage = createMemoryStorage();
 });
 
 test('lists only the cookie owner analyses', async () => {
@@ -132,6 +137,7 @@ test('deletes the owner analysis with recommendations', async () => {
 
   expect(first.status).toBe(200);
   expect(await first.json()).toEqual({ ok: true });
+  expect(memoryStorage.removals).toEqual(['clients/test/resume.pdf']);
 
   const after = await handleGetAnalysis(request('token-a'), id, deps());
   expect(after.status).toBe(404);

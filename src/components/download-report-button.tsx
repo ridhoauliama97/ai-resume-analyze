@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export function DownloadReportButton() {
   const [printing, setPrinting] = useState(false);
@@ -16,8 +16,14 @@ export function DownloadReportButton() {
   }
 
   return (
-    <Button type="button" variant="outline" size="sm" onClick={onDownload} disabled={printing}>
-      {printing ? 'Membuka...' : 'Unduh laporan'}
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      onClick={onDownload}
+      disabled={printing}
+    >
+      {printing ? "Membuka..." : "Unduh laporan"}
     </Button>
   );
 }

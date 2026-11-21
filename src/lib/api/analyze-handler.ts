@@ -12,6 +12,8 @@ import type { Db } from '@/lib/db/client';
 import { createAnalysis, upsertClient } from '@/lib/db/queries';
 import { ResumeParseError, type ResumeExtension } from '@/lib/parsing';
 import type { RateLimiter } from '@/lib/rate-limit';
+import { buildResumeStorageKey } from '@/lib/storage';
+import type { ResumeStorage } from '@/lib/storage/types';
 
 export type AnalyzeHandlerDeps = {
   db: Db;
@@ -27,6 +29,7 @@ export type AnalyzeHandlerDeps = {
   }) => Promise<{ text: string; extension: ResumeExtension }>;
   clientLimiter: RateLimiter;
   ipLimiter: RateLimiter;
+  storage: ResumeStorage;
   pepper: string;
   model: string;
   secureCookies: boolean;
@@ -73,6 +76,12 @@ const PARSE_ERROR_MESSAGES: Record<ResumeParseError['code'], string> = {
   too_large: 'Ukuran berkas melebihi batas 10 MB.',
   empty: 'Resume tidak bisa dibaca; kemungkinan hasil scan dan OCR belum didukung.',
   corrupt: 'Berkas tidak bisa dibaca. Pastikan berkas tidak rusak atau terenkripsi.',
+};
+
+const MIME_BY_EXTENSION: Record<ResumeExtension, string> = {
+  pdf: 'application/pdf',
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  doc: 'application/msword',
 };
 
 export async function handleAnalyze(
@@ -125,11 +134,13 @@ export async function handleAnalyze(
   }
 
   const fileName = sanitizeFileName(file.name || 'resume');
+  const buffer = new Uint8Array(await file.arrayBuffer());
   let parsed: { text: string; extension: ResumeExtension };
 
   try {
     parsed = await deps.parseFile({
-      buffer: new Uint8Array(await file.arrayBuffer()),
+      // pdf.js may transfer/detach the buffer; keep the original for storage.
+      buffer: buffer.slice(),
       fileName,
       mimeType: file.type || undefined,
     });
@@ -162,14 +173,42 @@ export async function handleAnalyze(
     );
   }
 
+  let clientId: string;
+
   try {
-    const clientId = await upsertClient(deps.db, tokenHash);
+    clientId = await upsertClient(deps.db, tokenHash);
+  } catch {
+    return errorResponse(
+      500,
+      'internal_error',
+      'Terjadi kesalahan saat menyimpan analisis. Coba lagi.',
+    );
+  }
+
+  const resumeFileKey = buildResumeStorageKey(clientId, parsed.extension);
+
+  try {
+    await deps.storage.upload({
+      key: resumeFileKey,
+      body: buffer,
+      contentType: file.type || MIME_BY_EXTENSION[parsed.extension],
+    });
+  } catch {
+    return errorResponse(
+      502,
+      'storage_unavailable',
+      'Gagal menyimpan berkas resume. Coba lagi beberapa saat lagi.',
+    );
+  }
+
+  try {
     const id = await createAnalysis(deps.db, {
       clientId,
       fileName,
       fileType: file.type || parsed.extension,
       fileSize: file.size,
       resumeText: parsed.text,
+      resumeFileKey,
       targetPosition,
       jobDescription,
       marketContext: outcome.marketContext,
@@ -194,6 +233,7 @@ export async function handleAnalyze(
 
     return response;
   } catch {
+    await deps.storage.remove(resumeFileKey).catch(() => undefined);
     return errorResponse(
       500,
       'internal_error',

@@ -18,6 +18,7 @@ function record(clientId: string): NewAnalysisRecord {
     fileType: 'application/pdf',
     fileSize: 1024,
     resumeText: 'Ahmad Pratama — Frontend Engineer dengan pengalaman 6 tahun.',
+    resumeFileKey: 'clients/test/resume.pdf',
     targetPosition: 'Frontend Engineer',
     jobDescription: null,
     marketContext: null,

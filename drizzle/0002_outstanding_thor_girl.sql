@@ -1,0 +1,1 @@
+ALTER TABLE "analyses" ADD COLUMN "resume_file_key" text;

@@ -6,9 +6,11 @@ import {
   getAnalysisById,
   listAllAnalyses,
 } from '@/lib/db/queries';
+import type { ResumeStorage } from '@/lib/storage/types';
 
 export type AdminHandlerDeps = {
   db: Db;
+  storage: ResumeStorage;
 };
 
 function unauthorized(): NextResponse {
@@ -68,9 +70,18 @@ export async function handleAdminDeleteAnalysis(
     return unauthorized();
   }
 
+  const analysis = await getAnalysisById(deps.db, id);
+  if (!analysis) {
+    return notFound();
+  }
+
   const deleted = await deleteAnalysisById(deps.db, id);
   if (!deleted) {
     return notFound();
+  }
+
+  if (analysis.resumeFileKey) {
+    await deps.storage.remove(analysis.resumeFileKey).catch(() => undefined);
   }
 
   return NextResponse.json({ ok: true });

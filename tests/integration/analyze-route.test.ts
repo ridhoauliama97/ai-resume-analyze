@@ -9,6 +9,7 @@ import { createRateLimiter } from '@/lib/rate-limit';
 import type { AnalysisOutcome } from '@/lib/ai/analyze';
 import { JOB_CATEGORY_CODES, type AiResult } from '@/lib/ai/schema';
 import { resetDb, testDb } from './helpers';
+import { createMemoryStorage } from './storage-fake';
 
 function aiResult(): AiResult {
   return {
@@ -126,6 +127,7 @@ function deps(overrides: Partial<AnalyzeHandlerDeps> = {}): AnalyzeHandlerDeps {
     }),
     clientLimiter: createRateLimiter({ limit: 100, windowMs: 3_600_000 }),
     ipLimiter: createRateLimiter({ limit: 100, windowMs: 3_600_000 }),
+    storage: createMemoryStorage().storage,
     pepper: 'test-pepper',
     model: 'gemini-3.5-flash-lite',
     secureCookies: false,
@@ -139,9 +141,10 @@ beforeEach(async () => {
 });
 
 test('creates analysis and sets anonymous cookie', async () => {
+  const storage = createMemoryStorage();
   const response = await handleAnalyze(
     request({ position: 'Frontend Engineer', jobDescription: 'Menguasai React.' }),
-    deps(),
+    deps({ storage: storage.storage }),
   );
 
   expect(response.status).toBe(200);
@@ -158,6 +161,10 @@ test('creates analysis and sets anonymous cookie', async () => {
   expect(rows[0].consentVersion).toBe(CONSENT_VERSION);
   expect(rows[0].targetPosition).toBe('Frontend Engineer');
   expect(rows[0].fileType).toBe('application/pdf');
+  expect(rows[0].resumeFileKey).toBe(storage.uploads[0].key);
+  expect(storage.uploads).toHaveLength(1);
+  expect(storage.uploads[0].key).toMatch(/^clients\/[0-9a-f-]+\/[0-9a-f-]+\.pdf$/);
+  expect(storage.uploads[0].contentType).toBe('application/pdf');
   expect(await testDb.select().from(recommendations)).toHaveLength(2);
 });
 
@@ -213,6 +220,43 @@ test('returns 502 when the AI layer fails and stores nothing', async () => {
   expect(await testDb.select().from(analyses)).toHaveLength(0);
 });
 
+test('keeps a storage copy when the parser detaches the buffer', async () => {
+  const storage = createMemoryStorage();
+
+  const response = await handleAnalyze(
+    request(),
+    deps({
+      storage: storage.storage,
+      parseFile: async ({ buffer }) => {
+        (buffer.buffer as ArrayBuffer).transfer();
+        return {
+          text: 'Ahmad Pratama — Frontend Engineer. '.repeat(20),
+          extension: 'pdf',
+        };
+      },
+    }),
+  );
+
+  expect(response.status).toBe(200);
+  expect(storage.uploads).toHaveLength(1);
+  expect(storage.uploads[0].body.byteLength).toBeGreaterThan(0);
+  expect(new TextDecoder().decode(storage.uploads[0].body.slice(0, 4))).toBe('%PDF');
+});
+
+test('storage failure stores no row', async () => {
+  const storage = createMemoryStorage();
+  storage.storage.upload = async () => {
+    throw new Error('storage down');
+  };
+
+  const response = await handleAnalyze(request(), deps({ storage: storage.storage }));
+
+  expect(response.status).toBe(502);
+  const body = (await response.json()) as { error: { code: string } };
+  expect(body.error.code).toBe('storage_unavailable');
+  expect(await testDb.select().from(analyses)).toHaveLength(0);
+});
+
 test('enforces the per-client rate limit', async () => {
   const limited = deps({
     clientLimiter: createRateLimiter({ limit: 1, windowMs: 3_600_000 }),
@@ -249,6 +293,11 @@ test('rejects AI_MOCK in production', () => {
     CLIENT_TOKEN_PEPPER: 'pepper',
     ADMIN_USERNAME: 'admin',
     ADMIN_PASSWORD: 'change-me',
+    SUPABASE_S3_ENDPOINT: 'https://example.supabase.co/storage/v1/s3',
+    SUPABASE_S3_REGION: 'ap-northeast-1',
+    SUPABASE_S3_ACCESS_KEY_ID: 'test-key',
+    SUPABASE_S3_SECRET_ACCESS_KEY: 'test-secret',
+    SUPABASE_STORAGE_BUCKET: 'resumes',
     AI_MOCK: '1',
     NODE_ENV: 'production',
   } as const;
@@ -262,6 +311,11 @@ test('rejects AI_MOCK in production', () => {
       CLIENT_TOKEN_PEPPER: env.CLIENT_TOKEN_PEPPER,
       ADMIN_USERNAME: env.ADMIN_USERNAME,
       ADMIN_PASSWORD: env.ADMIN_PASSWORD,
+      SUPABASE_S3_ENDPOINT: env.SUPABASE_S3_ENDPOINT,
+      SUPABASE_S3_REGION: env.SUPABASE_S3_REGION,
+      SUPABASE_S3_ACCESS_KEY_ID: env.SUPABASE_S3_ACCESS_KEY_ID,
+      SUPABASE_S3_SECRET_ACCESS_KEY: env.SUPABASE_S3_SECRET_ACCESS_KEY,
+      SUPABASE_STORAGE_BUCKET: env.SUPABASE_STORAGE_BUCKET,
       AI_MOCK: '1',
       NODE_ENV: 'production',
     }),

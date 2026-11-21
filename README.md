@@ -183,22 +183,33 @@ Jalankan setelah perubahan prompt/model dengan API asli:
 1. Buat project Supabase, lalu buka **Connect → Transaction pooler**. Salin
    connection string IPv4 port `6543` (bukan direct connection yang IPv6-only).
 2. Terapkan migrasi ke database Supabase:
+
    ```bash
    DATABASE_URL="<transaction-pooler-url>" npm run db:migrate
    ```
+
 3. Import repo ke Vercel, lalu set environment variables berikut di
    **Project Settings → Environment Variables**:
    - `DATABASE_URL` — transaction pooler Supabase
    - `GEMINI_API_KEY`, `GEMINI_MODEL`, `TAVILY_API_KEY`
    - `CLIENT_TOKEN_PEPPER` — string acak panjang
    - `ADMIN_USERNAME`, `ADMIN_PASSWORD` — kredensial admin
+   - `SUPABASE_S3_ENDPOINT`, `SUPABASE_S3_REGION`,
+     `SUPABASE_S3_ACCESS_KEY_ID`, `SUPABASE_S3_SECRET_ACCESS_KEY`,
+     `SUPABASE_STORAGE_BUCKET` — kredensial S3 server-side dan bucket privat
    - `DB_MAX_CONNECTIONS=3`
    - `AI_MOCK=0`
 4. Deploy. Buka `/auth/admin`, login, lalu cek `/admin`.
 
 `postgres-js` dikonfigurasi dengan `prepare: false` agar kompatibel dengan
-transaction pooling Supabase. Hanya admin yang memiliki akses ke dashboard
-riwayat; tidak ada registrasi user biasa.
+transaction pooling Supabase. Berkas asli disimpan di bucket Supabase Storage
+privat (`resumes`) dan dihapus saat analisis dihapus. Hanya admin yang memiliki
+akses ke dashboard riwayat; tidak ada registrasi user biasa.
+
+> Catatan: Vercel Functions membatasi body request 4.5 MB. Saat ini upload
+> melalui `/api/analyze`, jadi berkas yang lebih besar dari 4.5 MB memerlukan
+> direct-to-storage upload (presigned URL) sebagai langkah lanjutan di
+> production.
 
 Web Analytics aktif di project Vercel dan dirender lewat `@vercel/analytics`
 di root layout.

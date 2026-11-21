@@ -8,6 +8,11 @@ const envSchema = z.object({
   CLIENT_TOKEN_PEPPER: z.string().min(1),
   ADMIN_USERNAME: z.string().min(1).default('admin'),
   ADMIN_PASSWORD: z.string().min(1).default('change-me'),
+  SUPABASE_S3_ENDPOINT: z.string().url(),
+  SUPABASE_S3_REGION: z.string().min(1),
+  SUPABASE_S3_ACCESS_KEY_ID: z.string().min(1),
+  SUPABASE_S3_SECRET_ACCESS_KEY: z.string().min(1),
+  SUPABASE_STORAGE_BUCKET: z.string().min(1).default('resumes'),
   AI_MOCK: z.enum(['0', '1']).optional(),
   NODE_ENV: z.enum(['development', 'test', 'production']).optional(),
 });

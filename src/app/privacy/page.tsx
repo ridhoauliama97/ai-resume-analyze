@@ -1,6 +1,18 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { PRIVACY_SECTIONS } from '@/lib/content/privacy';
 
 export const metadata: Metadata = {
@@ -20,23 +32,32 @@ export default function PrivacyPage() {
           </p>
         </header>
 
-        <div className="flex flex-col gap-4">
-          {PRIVACY_SECTIONS.map((section) => (
-            <Card key={section.title} size="sm">
-              <CardHeader>
-                <CardTitle className="text-base">{section.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  {section.body}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Detail pemberitahuan</CardTitle>
+            <CardDescription>
+              Klik setiap bagian untuk membaca rinciannya. Beberapa bagian dapat dibuka
+              bersamaan.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Accordion multiple defaultValue={[PRIVACY_SECTIONS[0].title]}>
+              {PRIVACY_SECTIONS.map((section) => (
+                <AccordionItem key={section.title} value={section.title}>
+                  <AccordionTrigger>{section.title}</AccordionTrigger>
+                  <AccordionContent>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {section.body}
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </CardContent>
+        </Card>
 
         <p className="text-sm">
-          <Link href="/" className="underline underline-offset-4">
+          <Link href="/" className="underline underline-offset-4 hover:text-foreground">
             Kembali ke beranda
           </Link>
         </p>

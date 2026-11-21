@@ -1,7 +1,18 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState, type ChangeEvent, type FormEvent } from 'react';
+import { FileText, Upload, X } from 'lucide-react';
+import { useRef, useState, type ChangeEvent, type FormEvent } from 'react';
+import {
+  Attachment,
+  AttachmentAction,
+  AttachmentActions,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentMedia,
+  AttachmentTitle,
+  AttachmentTrigger,
+} from '@/components/ui/attachment';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,7 +25,10 @@ import {
 } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { Progress, ProgressLabel } from '@/components/ui/progress';
+import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
+import { toast } from '@/components/ui/toast';
 
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 const ALLOWED_EXTENSIONS = /\.(pdf|docx|doc)$/i;
@@ -24,9 +38,21 @@ type AnalyzeResponse = {
   error?: { message?: string };
 };
 
+type AttachmentState = 'idle' | 'uploading' | 'processing' | 'error' | 'done';
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024 * 1024) {
+    return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  }
+
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export function UploadForm() {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [attachmentState, setAttachmentState] = useState<AttachmentState>('idle');
   const [targetPosition, setTargetPosition] = useState('');
   const [jobDescription, setJobDescription] = useState('');
   const [consent, setConsent] = useState(false);
@@ -35,8 +61,25 @@ export function UploadForm() {
   const [pending, setPending] = useState(false);
 
   function onFileChange(event: ChangeEvent<HTMLInputElement>) {
-    setFile(event.target.files?.[0] ?? null);
+    const selected = event.target.files?.[0] ?? null;
+    setFile(selected);
+    setAttachmentState(selected ? 'done' : 'idle');
     setError(null);
+  }
+
+  function clearFile() {
+    setFile(null);
+    setAttachmentState('idle');
+    setError(null);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }
+
+  function fail(message: string) {
+    setError(message);
+    setAttachmentState('error');
   }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -54,12 +97,12 @@ export function UploadForm() {
     }
 
     if (!ALLOWED_EXTENSIONS.test(file.name)) {
-      setError('Format berkas harus PDF, DOCX, atau DOC.');
+      fail('Format berkas harus PDF, DOCX, atau DOC.');
       return;
     }
 
     if (file.size > MAX_UPLOAD_BYTES) {
-      setError('Ukuran berkas maksimal 10 MB.');
+      fail('Ukuran berkas maksimal 10 MB.');
       return;
     }
 
@@ -76,28 +119,56 @@ export function UploadForm() {
     }
 
     setPending(true);
+    setAttachmentState('uploading');
+
+    const processingTimer = window.setTimeout(() => {
+      setAttachmentState('processing');
+    }, 700);
 
     try {
-      const response = await fetch('/api/analyze', { method: 'POST', body: form });
-      const data = (await response.json().catch(() => null)) as AnalyzeResponse | null;
+      const data = await toast.promise(
+        (async () => {
+          const response = await fetch('/api/analyze', { method: 'POST', body: form });
+          const payload = (await response.json().catch(() => null)) as AnalyzeResponse | null;
 
-      if (!response.ok) {
-        setError(data?.error?.message ?? 'Analisis gagal. Coba lagi.');
-        return;
-      }
+          if (!response.ok) {
+            throw new Error(payload?.error?.message ?? 'Analisis gagal. Coba lagi.');
+          }
 
-      if (!data?.id) {
-        setError('Respons analisis tidak valid. Coba lagi.');
-        return;
-      }
+          if (!payload?.id) {
+            throw new Error('Respons analisis tidak valid. Coba lagi.');
+          }
 
+          return payload as { id: string };
+        })(),
+        {
+          loading: 'Menganalisis resume...',
+          success: 'Analisis selesai. Membuka report...',
+          error: (cause) =>
+            cause instanceof Error ? cause.message : 'Analisis gagal. Coba lagi.',
+        },
+      );
+
+      setAttachmentState('done');
       router.push(`/analysis/${data.id}`);
-    } catch {
-      setError('Tidak dapat terhubung ke server. Periksa koneksi lalu coba lagi.');
+    } catch (cause) {
+      fail(cause instanceof Error ? cause.message : 'Analisis gagal. Coba lagi.');
     } finally {
+      window.clearTimeout(processingTimer);
       setPending(false);
     }
   }
+
+  const attachmentDescription =
+    attachmentState === 'error'
+      ? 'Berkas gagal diproses. Periksa detail di bawah.'
+      : attachmentState === 'uploading'
+        ? 'Mengunggah berkas ke penyimpanan...'
+        : attachmentState === 'processing'
+          ? 'Menilai struktur, pengalaman, dan keyword resume...'
+          : file
+            ? `${formatFileSize(file.size)} · ${file.name.split('.').pop()?.toUpperCase() ?? 'Dokumen'}`
+            : 'PDF, DOCX, atau DOC — maksimal 10 MB.';
 
   return (
     <Card>
@@ -115,14 +186,66 @@ export function UploadForm() {
               Berkas resume
             </label>
             <Input
+              ref={fileInputRef}
               id="resume-file"
               type="file"
               accept=".pdf,.docx,.doc,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               onChange={onFileChange}
-              className="file:mr-3 file:rounded-md file:border file:border-input file:bg-muted file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-foreground hover:file:bg-accent"
+              className="sr-only"
             />
+
+            <Attachment state={attachmentState} className="w-full">
+              <AttachmentTrigger
+                render={<label htmlFor="resume-file" />}
+                aria-label="Pilih berkas"
+              />
+              <AttachmentMedia>
+                {pending ? <Spinner /> : file ? <FileText /> : <Upload />}
+              </AttachmentMedia>
+              <AttachmentContent>
+                <AttachmentTitle>
+                  {file
+                    ? file.name
+                    : attachmentState === 'error'
+                      ? 'Berkas gagal diproses'
+                      : 'Belum ada berkas dipilih'}
+                </AttachmentTitle>
+                <AttachmentDescription aria-live="polite">
+                  {attachmentDescription}
+                </AttachmentDescription>
+              </AttachmentContent>
+              <AttachmentActions className="gap-1">
+                {file ? (
+                  <>
+                    <AttachmentAction
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      aria-label="Ganti berkas"
+                    >
+                      Ganti
+                    </AttachmentAction>
+                    <AttachmentAction
+                      type="button"
+                      onClick={clearFile}
+                      aria-label="Hapus berkas"
+                    >
+                      <X aria-hidden="true" />
+                    </AttachmentAction>
+                  </>
+                ) : (
+                  <AttachmentAction
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    aria-label="Pilih berkas"
+                  >
+                    Pilih
+                  </AttachmentAction>
+                )}
+              </AttachmentActions>
+            </Attachment>
+
             <p className="text-xs text-muted-foreground">
-              {file ? file.name : 'PDF, DOCX, atau DOC — maksimal 10 MB.'}
+              PDF, DOCX, atau DOC — maksimal 10 MB.
             </p>
           </div>
 
@@ -185,6 +308,16 @@ export function UploadForm() {
               </span>
             </label>
           </div>
+
+          {pending ? (
+            <Progress value={null} className="w-full">
+              <ProgressLabel className="text-sm text-muted-foreground">
+                {attachmentState === 'uploading'
+                  ? 'Mengunggah berkas...'
+                  : 'Menganalisis resume...'}
+              </ProgressLabel>
+            </Progress>
+          ) : null}
 
           {error ? (
             <Alert variant="destructive">

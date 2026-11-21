@@ -6,6 +6,7 @@ import Link from "next/link";
 import { CopyrightYear } from "@/components/copyright-year";
 import { GithubIcon } from "@/components/github-icon";
 import { SiteHeader } from "@/components/site-header";
+import { Toaster } from "@/components/ui/toast";
 import "./globals.css";
 
 const roboto = localFont({
@@ -37,8 +38,8 @@ const roboto = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "Analisis Resume AI",
-    template: "%s · Analisis Resume AI",
+    default: "Smart Resume Analyze",
+    template: "%s · Smart Resume Analyze",
   },
   description:
     "Nilai resume terhadap standar ATS dan posisi target, lengkap dengan saran perbaikan yang konkret.",
@@ -61,8 +62,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <footer className="border-t">
           <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <p>
-              &copy; <CopyrightYear /> Analisis Resume AI. Hasil analisis
-              bersifat saran, bukan jaminan lolos seleksi.
+              &copy; <CopyrightYear /> Smart Resume Analyze v0.1.0. All rights
+              reserved.
             </p>
             <Link
               href="/privacy"
@@ -77,13 +78,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 rel="noreferrer"
                 aria-label="GitHub repository"
                 title="GitHub repository"
-                className="inline-flex items-center gap-1.5 underline-offset-4 hover:text-foreground hover:underline"
+                className="inline-flex items-center gap-1.5 hover:text-foreground"
               >
                 <GithubIcon className="size-3.5" />
               </a>
             </p>
           </div>
         </footer>
+        <Toaster />
         <Analytics />
       </body>
     </html>

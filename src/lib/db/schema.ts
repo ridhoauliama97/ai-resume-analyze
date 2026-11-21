@@ -48,6 +48,7 @@ export const analyses = pgTable(
     fileType: text('file_type').notNull(),
     fileSize: integer('file_size').notNull(),
     resumeText: text('resume_text').notNull(),
+    resumeFileKey: text('resume_file_key'),
     targetPosition: text('target_position'),
     jobDescription: text('job_description'),
     marketContext: text('market_context'),

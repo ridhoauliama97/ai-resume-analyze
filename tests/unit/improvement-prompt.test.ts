@@ -9,6 +9,7 @@ const analysis: AnalysisDetail = {
   fileType: 'application/pdf',
   fileSize: 1024,
   resumeText: 'Resume lama.',
+  resumeFileKey: null,
   targetPosition: 'Frontend Engineer',
   jobDescription: 'Menguasai React dan TypeScript.',
   marketContext: null,

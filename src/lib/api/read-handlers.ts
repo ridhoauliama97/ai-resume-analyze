@@ -7,10 +7,12 @@ import {
   getClientByTokenHash,
   listAnalysesForClient,
 } from '@/lib/db/queries';
+import type { ResumeStorage } from '@/lib/storage/types';
 
 export type ReadHandlerDeps = {
   db: Db;
   pepper: string;
+  storage: ResumeStorage;
 };
 
 async function resolveClientId(
@@ -76,10 +78,20 @@ export async function handleDeleteAnalysis(
     return notFound();
   }
 
+  const analysis = await getAnalysisForClient(deps.db, id, clientId);
+
+  if (!analysis) {
+    return notFound();
+  }
+
   const deleted = await deleteAnalysisForClient(deps.db, id, clientId);
 
   if (!deleted) {
     return notFound();
+  }
+
+  if (analysis.resumeFileKey) {
+    await deps.storage.remove(analysis.resumeFileKey).catch(() => undefined);
   }
 
   return NextResponse.json({ ok: true });

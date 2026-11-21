@@ -1,4 +1,4 @@
-# AI Resume Analyzer — Design Document
+# Smart Resume Analyze — Design Document
 
 Tanggal: 14 November 2026
 Status: menunggu persetujuan
