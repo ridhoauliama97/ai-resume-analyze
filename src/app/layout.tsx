@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 import Link from "next/link";
+import { CopyrightYear } from "@/components/copyright-year";
 import { GithubIcon } from "@/components/github-icon";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
@@ -60,40 +61,27 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <footer className="border-t">
           <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <p>
-              &copy; 2026. Smart Resume Analyze. Hasil analisis bersifat saran,
-              bukan jaminan lolos seleksi.
+              &copy; <CopyrightYear /> Analisis Resume AI. Hasil analisis
+              bersifat saran, bukan jaminan lolos seleksi.
             </p>
-            <nav aria-label="Tautan footer">
-              <ul className="flex flex-wrap items-center gap-4">
-                <li>
-                  <a
-                    href="https://github.com/ridhoauliama97/ai-resume-analyze"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 underline-offset-4 hover:text-foreground hover:underline"
-                  >
-                    <GithubIcon className="size-3.5" />
-                    <span>GitHub</span>
-                  </a>
-                </li>
-                <li>
-                  <Link
-                    href="/privacy"
-                    className="underline underline-offset-4 hover:text-foreground"
-                  >
-                    Pemberitahuan privasi
-                  </Link>
-                </li>
-              </ul>
-            </nav>
-          </div>
-          <div className="border-t">
-            <div className="mx-auto w-full max-w-5xl px-4 py-4 text-xs text-muted-foreground sm:px-6">
-              Build &amp; Maintained by{" "}
-              <span className="font-medium text-foreground">
-                Ridho Aulia Mahqoma Angkat
-              </span>
-            </div>
+            <Link
+              href="/privacy"
+              className="underline underline-offset-4 hover:text-foreground"
+            >
+              Pemberitahuan privasi
+            </Link>
+            <p>
+              <a
+                href="https://github.com/ridhoauliama97/ai-resume-analyze"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="GitHub repository"
+                title="GitHub repository"
+                className="inline-flex items-center gap-1.5 underline-offset-4 hover:text-foreground hover:underline"
+              >
+                <GithubIcon className="size-3.5" />
+              </a>
+            </p>
           </div>
         </footer>
         <Analytics />
