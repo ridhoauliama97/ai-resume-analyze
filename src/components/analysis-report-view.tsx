@@ -266,7 +266,7 @@ export function AnalysisReportView({
           </>
         ) : null}
         <div className="ml-auto">
-          <DeleteAnalysisButton analysisId={analysis.id} />
+          <DeleteAnalysisButton analysisId={analysis.id} admin={admin} />
         </div>
       </section>
     </div>

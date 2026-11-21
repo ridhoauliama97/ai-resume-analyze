@@ -8,9 +8,11 @@ import { Button } from '@/components/ui/button';
 export function DeleteAnalysisButton({
   analysisId,
   compact = false,
+  admin = false,
 }: {
   analysisId: string;
   compact?: boolean;
+  admin?: boolean;
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -29,14 +31,17 @@ export function DeleteAnalysisButton({
     setError(null);
 
     try {
-      const response = await fetch(`/api/analyses/${analysisId}`, { method: 'DELETE' });
+      const endpoint = admin
+        ? `/api/admin/analyses/${analysisId}`
+        : `/api/analyses/${analysisId}`;
+      const response = await fetch(endpoint, { method: 'DELETE' });
 
       if (!response.ok) {
         setError('Analisis gagal dihapus. Coba lagi.');
         return;
       }
 
-      router.push('/history');
+      router.push(admin ? '/admin' : '/history');
       router.refresh();
     } catch {
       setError('Analisis gagal dihapus. Coba lagi.');

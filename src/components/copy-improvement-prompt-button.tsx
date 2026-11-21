@@ -42,7 +42,7 @@ export function CopyImprovementPromptButton({
       ? "Prompt tersalin"
       : status === "error"
         ? "Gagal menyalin"
-        : "Salin prompt perbaikan";
+        : "Copy prompts";
 
   const icon =
     status === "copied" ? (
@@ -54,7 +54,13 @@ export function CopyImprovementPromptButton({
     );
 
   return (
-    <Button type="button" variant="outline" size="sm" onClick={onCopy}>
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      onClick={onCopy}
+      aria-label="Salin prompt perbaikan"
+    >
       {icon}
       {label}
     </Button>

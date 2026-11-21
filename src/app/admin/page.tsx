@@ -96,7 +96,7 @@ async function AdminDashboard() {
                       >
                         Lihat
                       </Link>
-                      <DeleteAnalysisButton analysisId={analysis.id} compact />
+                      <DeleteAnalysisButton analysisId={analysis.id} compact admin />
                     </div>
                   </td>
                 </tr>
