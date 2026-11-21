@@ -3,6 +3,18 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Trash2 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 
 export function DeleteAnalysisButton({
@@ -15,18 +27,11 @@ export function DeleteAnalysisButton({
   admin?: boolean;
 }) {
   const router = useRouter();
+  const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function onDelete() {
-    const confirmed = window.confirm(
-      'Hapus analisis ini? Riwayat, rekomendasi, dan feedback terkait akan dihapus permanen.',
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
     setPending(true);
     setError(null);
 
@@ -41,6 +46,7 @@ export function DeleteAnalysisButton({
         return;
       }
 
+      setOpen(false);
       router.push(admin ? '/admin' : '/history');
       router.refresh();
     } catch {
@@ -51,29 +57,56 @@ export function DeleteAnalysisButton({
   }
 
   return (
-    <div className={compact ? 'inline-flex' : 'flex flex-col items-start gap-2'}>
-      <Button
-        type="button"
-        variant="destructive"
-        size={compact ? 'icon-sm' : 'sm'}
-        onClick={onDelete}
-        disabled={pending}
-        aria-label={compact ? 'Hapus analisis' : undefined}
-        title={compact ? 'Hapus analisis' : undefined}
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger
+        render={
+          <Button
+            variant="destructive"
+            size={compact ? 'icon-sm' : 'sm'}
+            aria-label={compact ? 'Hapus analisis' : undefined}
+            title={compact ? 'Hapus analisis' : undefined}
+          />
+        }
       >
         {compact ? (
-          <Trash2 aria-hidden="true" className="size-3.5" />
-        ) : pending ? (
-          'Menghapus...'
+          <Trash2 aria-hidden="true" data-icon="inline-start" />
         ) : (
-          'Hapus analisis'
+          <>
+            <Trash2 aria-hidden="true" data-icon="inline-start" />
+            Hapus analisis
+          </>
         )}
-      </Button>
-      {error ? (
-        <p role="alert" className="text-sm text-destructive">
-          {error}
-        </p>
-      ) : null}
-    </div>
+      </AlertDialogTrigger>
+
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogMedia>
+            <Trash2 aria-hidden="true" />
+          </AlertDialogMedia>
+          <AlertDialogTitle>Hapus analisis ini?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Analisis, rekomendasi, feedback, dan berkas asli akan dihapus permanen.
+            Tindakan ini tidak bisa dibatalkan.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+
+        {error ? (
+          <p role="alert" className="text-sm text-destructive">
+            {error}
+          </p>
+        ) : null}
+
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={pending}>Batal</AlertDialogCancel>
+          <AlertDialogAction
+            variant="destructive"
+            onClick={onDelete}
+            disabled={pending}
+          >
+            {pending ? 'Menghapus...' : 'Hapus'}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

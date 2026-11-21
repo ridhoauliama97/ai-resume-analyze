@@ -32,21 +32,11 @@ async function AdminDashboard() {
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Dashboard admin</h1>
-          <p className="text-sm text-muted-foreground">
-            Seluruh riwayat analisis. Masuk sebagai {admin}.
-          </p>
-        </div>
-        <form action="/api/auth/admin/logout" method="post">
-          <button
-            type="submit"
-            className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-          >
-            Keluar
-          </button>
-        </form>
+      <header className="flex flex-col gap-2">
+        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Riwayat Analisa</h1>
+        <p className="text-sm text-muted-foreground">
+          Seluruh riwayat analisis dari user/client. Masuk sebagai {admin}.
+        </p>
       </header>
 
       {analyses.length === 0 ? (
@@ -111,10 +101,8 @@ async function AdminDashboard() {
 
 export default function AdminPage() {
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">
-      <Suspense fallback={<DashboardSkeleton />}>
-        <AdminDashboard />
-      </Suspense>
-    </main>
+    <Suspense fallback={<DashboardSkeleton />}>
+      <AdminDashboard />
+    </Suspense>
   );
 }

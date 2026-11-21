@@ -30,6 +30,13 @@ export const recommendationPriorityEnum = pgEnum('recommendation_priority', [
   'low',
 ]);
 
+export const appSettings = pgTable('app_settings', {
+  id: text('id').primaryKey().default('default'),
+  siteName: text('site_name').notNull().default('Smart Resume Analyze'),
+  logoUrl: text('logo_url'),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
 export const clients = pgTable('clients', {
   id: uuid('id').primaryKey().defaultRandom(),
   tokenHash: text('token_hash').notNull().unique(),

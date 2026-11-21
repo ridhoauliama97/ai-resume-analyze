@@ -59,7 +59,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <div id="main-content" tabIndex={-1} className="flex flex-1 flex-col">
           {children}
         </div>
-        <footer className="border-t">
+        <footer data-app-chrome className="border-t">
           <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <p>
               &copy; <CopyrightYear /> Smart Resume Analyze v0.1.0. All rights

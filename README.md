@@ -17,6 +17,8 @@ yang tersimpan di PostgreSQL untuk peningkatan kualitas penilaian.
   per rekomendasi dan komentar keseluruhan.
 - Riwayat anonim per browser (cookie), tanpa login. Non-admin tidak melihat daftar
   riwayat; admin dapat melihat seluruh riwayat di `/admin` (login `/auth/admin`).
+- Dashboard admin memakai sidebar dengan menu **Riwayat Analisa** dan **Pengaturan**
+  (nama website, logo/icon, serta placeholder pengaturan AI).
 - Report memiliki tombol unduh (cetak/save as PDF) dan salin prompt perbaikan resume.
 - Halaman privasi yang menjelaskan pemrosesan Gemini/Tavily, retensi, izin dataset
   opsional, dan cara menghapus data.

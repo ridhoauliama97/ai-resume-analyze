@@ -2,7 +2,46 @@ import { and, desc, eq } from 'drizzle-orm';
 import type { AiResult } from '@/lib/ai/schema';
 import type { Band } from '@/lib/types';
 import type { Db } from './client';
-import { analyses, clients, feedback, recommendations } from './schema';
+import { analyses, appSettings, clients, feedback, recommendations } from './schema';
+
+export type SiteSettings = {
+  siteName: string;
+  logoUrl: string | null;
+};
+
+const DEFAULT_SITE_SETTINGS: SiteSettings = {
+  siteName: 'Smart Resume Analyze',
+  logoUrl: null,
+};
+
+export async function getSiteSettings(db: Db): Promise<SiteSettings> {
+  const [row] = await db
+    .select({ siteName: appSettings.siteName, logoUrl: appSettings.logoUrl })
+    .from(appSettings)
+    .limit(1);
+
+  return row ?? DEFAULT_SITE_SETTINGS;
+}
+
+export async function updateSiteSettings(
+  db: Db,
+  input: SiteSettings,
+): Promise<SiteSettings> {
+  const [row] = await db
+    .insert(appSettings)
+    .values({ id: 'default', siteName: input.siteName, logoUrl: input.logoUrl })
+    .onConflictDoUpdate({
+      target: appSettings.id,
+      set: {
+        siteName: input.siteName,
+        logoUrl: input.logoUrl,
+        updatedAt: new Date(),
+      },
+    })
+    .returning({ siteName: appSettings.siteName, logoUrl: appSettings.logoUrl });
+
+  return row;
+}
 
 export type Analysis = typeof analyses.$inferSelect;
 export type Recommendation = typeof recommendations.$inferSelect;

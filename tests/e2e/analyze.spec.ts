@@ -31,8 +31,8 @@ test('analyzes a resume, saves a vote, and deletes it', async ({ page }) => {
     'true',
   );
 
-  page.on('dialog', (dialog) => dialog.accept());
   await page.getByRole('button', { name: 'Hapus analisis' }).click();
+  await page.getByRole('button', { name: 'Hapus' }).click();
   await page.waitForURL('/');
   await expect(page.getByRole('heading', { name: 'Nilai resume-mu sebelum dikirim.' })).toBeVisible();
 });

@@ -27,7 +27,7 @@ function notFound(): NextResponse {
   );
 }
 
-function isAdminRequest(request: Request): boolean {
+export function isAdminRequest(request: Request): boolean {
   const cookieHeader = request.headers.get('cookie') || '';
   const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${ADMIN_COOKIE}=([^;]+)`));
   return verifyAdminSession(match ? decodeURIComponent(match[1]) : undefined);

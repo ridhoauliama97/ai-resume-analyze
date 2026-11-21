@@ -38,7 +38,7 @@ test('admin can log in and open the dashboard', async ({ page }) => {
   await page.getByRole('button', { name: 'Masuk' }).click();
 
   await page.waitForURL('/admin');
-  await expect(page.getByRole('heading', { name: 'Dashboard admin' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Riwayat Analisa' })).toBeVisible();
 });
 
 test('non-admin history route redirects to the home page', async ({ page }) => {

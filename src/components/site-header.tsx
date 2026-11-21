@@ -1,11 +1,15 @@
 import Link from "next/link";
+import { SiteBrand } from "@/components/site-brand";
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
+    <header
+      data-app-chrome
+      className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur"
+    >
       <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-6">
-        <Link href="/" className="text-sm font-semibold tracking-tight">
-          Smart Resume Analyze
+        <Link href="/" className="min-w-0">
+          <SiteBrand />
         </Link>
         <nav aria-label="Navigasi utama">
           <ul className="flex items-center gap-4 text-sm">

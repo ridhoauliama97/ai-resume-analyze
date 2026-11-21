@@ -21,13 +21,11 @@ beforeEach(() => {
   refresh.mockReset();
   fetchMock = vi.fn(async () => ({ ok: true, status: 200 }));
   vi.stubGlobal('fetch', fetchMock);
-  vi.spyOn(window, 'confirm').mockReturnValue(true);
 });
 
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
-  vi.restoreAllMocks();
 });
 
 test('admin delete uses the admin endpoint and returns to the dashboard', async () => {
@@ -35,6 +33,7 @@ test('admin delete uses the admin endpoint and returns to the dashboard', async 
   render(<DeleteAnalysisButton analysisId="abc" admin compact />);
 
   await user.click(screen.getByRole('button', { name: 'Hapus analisis' }));
+  await user.click(screen.getByRole('button', { name: 'Hapus' }));
 
   expect(fetchMock).toHaveBeenCalledWith('/api/admin/analyses/abc', {
     method: 'DELETE',
@@ -47,6 +46,7 @@ test('client delete uses the client endpoint and returns to history', async () =
   render(<DeleteAnalysisButton analysisId="abc" />);
 
   await user.click(screen.getByRole('button', { name: 'Hapus analisis' }));
+  await user.click(screen.getByRole('button', { name: 'Hapus' }));
 
   expect(fetchMock).toHaveBeenCalledWith('/api/analyses/abc', {
     method: 'DELETE',

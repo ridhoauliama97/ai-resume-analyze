@@ -149,6 +149,10 @@
   }
 }
 
+body:has([data-admin-shell]) [data-app-chrome] {
+  display: none;
+}
+
 @page {
   margin: 16mm;
 }

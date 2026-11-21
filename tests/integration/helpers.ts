@@ -13,5 +13,7 @@ if (!testUrl || !new URL(testUrl).pathname.endsWith('_test')) {
 export const { db: testDb, close: closeTestDb } = createDb(testUrl);
 
 export async function resetDb(db: Db = testDb): Promise<void> {
-  await db.execute(sql`TRUNCATE TABLE feedback, recommendations, analyses, clients CASCADE`);
+  await db.execute(
+    sql`TRUNCATE TABLE feedback, recommendations, analyses, clients, app_settings CASCADE`,
+  );
 }
