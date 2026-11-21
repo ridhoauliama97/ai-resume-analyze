@@ -11,11 +11,11 @@ export function SiteBrand() {
       {settings.logoUrl ? (
         <span
           aria-hidden="true"
-          className="size-6 shrink-0 rounded-md bg-muted bg-cover bg-center"
+          className="size-8 shrink-0 rounded-lg bg-muted bg-cover bg-center"
           style={{ backgroundImage: `url(${settings.logoUrl})` }}
         />
       ) : (
-        <FileText aria-hidden="true" className="size-5 shrink-0 text-muted-foreground" />
+        <FileText aria-hidden="true" className="size-6 shrink-0 text-muted-foreground" />
       )}
       <span className="truncate text-sm font-semibold tracking-tight">
         {settings.siteName}
