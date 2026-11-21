@@ -45,6 +45,7 @@ test('queries page views and visitors for the last 30 days', async () => {
   expect(url.searchParams.get('projectId')).toBe('prj_test');
   expect(url.searchParams.get('teamId')).toBe('team_test');
   expect(url.searchParams.get('since')).toEqual(expect.any(String));
+  expect(url.searchParams.get('until')).toEqual(expect.any(String));
   expect(init.headers).toEqual({ Authorization: 'Bearer test-token' });
 });
 

@@ -26,10 +26,12 @@ export async function getWebAnalyticsSummary(
     return { status: 'not_configured' };
   }
 
+  const until = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
   const since = new Date(Date.now() - THIRTY_DAYS_MS).toISOString();
   const url = new URL('https://api.vercel.com/v1/query/web-analytics/visits/count');
   url.searchParams.set('projectId', env.VERCEL_PROJECT_ID);
   url.searchParams.set('since', since);
+  url.searchParams.set('until', until);
 
   if (env.VERCEL_TEAM_ID) {
     url.searchParams.set('teamId', env.VERCEL_TEAM_ID);
