@@ -1,0 +1,96 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main, feat/ai-resume-analyzer]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Lint, typecheck, tests, build, E2E
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: resume
+          POSTGRES_PASSWORD: resume
+          POSTGRES_DB: resume_analyzer
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U resume"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgres://resume:resume@localhost:5432/resume_analyzer
+      TEST_DATABASE_URL: postgres://resume:resume@localhost:5432/resume_analyzer_test
+      GEMINI_API_KEY: test-key
+      GEMINI_MODEL: gemini-3.5-flash-lite
+      CLIENT_TOKEN_PEPPER: ci-pepper-2026
+      ADMIN_USERNAME: admin
+      ADMIN_PASSWORD: ci-admin-password
+      AI_MOCK: '1'
+      PLAYWRIGHT_CHANNEL: chromium
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create test database
+        run: PGPASSWORD=resume psql -h localhost -U resume -d resume_analyzer -c 'CREATE DATABASE resume_analyzer_test;'
+
+      - name: Apply migrations
+        run: npm run db:migrate && npm run db:migrate:test
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit and integration tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end tests
+        run: npm run test:e2e
+
+  deploy:
+    name: Deploy to Vercel
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Vercel production deploy hook
+        env:
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$VERCEL_DEPLOY_HOOK" ]; then
+            echo "::warning::VERCEL_DEPLOY_HOOK is not set; skipping deployment. Add it in GitHub repository secrets."
+            exit 0
+          fi
+          curl -fsS -X POST "$VERCEL_DEPLOY_HOOK"

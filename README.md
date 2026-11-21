@@ -200,6 +200,26 @@ Jalankan setelah perubahan prompt/model dengan API asli:
 transaction pooling Supabase. Hanya admin yang memiliki akses ke dashboard
 riwayat; tidak ada registrasi user biasa.
 
+Web Analytics aktif di project Vercel dan dirender lewat `@vercel/analytics`
+di root layout.
+
+### CI/CD dengan GitHub Actions
+
+`.github/workflows/ci.yml` menjalankan lint, typecheck, unit/integration test,
+build, dan E2E Playwright pada setiap push dan pull request. Test memakai
+service Postgres sementara dan `PLAYWRIGHT_CHANNEL=chromium`.
+
+Deploy production dilakukan lewat Vercel Deploy Hook setelah CI sukses di
+`main`. Buat hook sekali di **Vercel → Project → Settings → Git → Deploy Hooks**
+(branch `main`), lalu simpan URL-nya sebagai secret GitHub:
+
+```bash
+gh secret set VERCEL_DEPLOY_HOOK
+```
+
+`vercel.json` mematikan auto-deploy Git khusus branch `main` agar deployment
+tidak berjalan dua kali; preview deployment untuk branch lain tetap aktif.
+
 ## Catatan deployment
 
 - `AI_MOCK=1` hanya untuk pengembangan/pengujian; `buildAnalyzeDeps` menolaknya di
