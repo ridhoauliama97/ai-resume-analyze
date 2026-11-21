@@ -1,4 +1,4 @@
-# Analisis Resume AI
+# Smart Resume Analyze
 
 Aplikasi web untuk menilai resume PDF/DOCX/DOC terhadap standar ATS, dengan lapis
 job-specific opsional bila pengguna mengisi posisi target atau job description.
