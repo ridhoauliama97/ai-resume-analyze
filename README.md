@@ -213,6 +213,10 @@ transaction pooling Supabase. Berkas asli disimpan di bucket Supabase Storage
 privat (`resumes`) dan dihapus saat analisis dihapus. Hanya admin yang memiliki
 akses ke dashboard riwayat; tidak ada registrasi user biasa.
 
+Tabel `app_settings` memakai RLS dan akses `anon`/`authenticated` dicabut.
+Branding publik dibaca lewat `/api/settings`; penulisan hanya lewat koneksi
+server-side dengan kredensial database.
+
 > Catatan: Vercel Functions membatasi body request 4.5 MB. Saat ini upload
 > melalui `/api/analyze`, jadi berkas yang lebih besar dari 4.5 MB memerlukan
 > direct-to-storage upload (presigned URL) sebagai langkah lanjutan di

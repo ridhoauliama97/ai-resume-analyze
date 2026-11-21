@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, FileText, Gauge, Sparkles } from "lucide-react";
+import { SiteName } from "@/components/site-name";
 import { UploadForm } from "@/components/upload-form";
 
 const FEATURES = [
@@ -28,7 +29,7 @@ export default function Home() {
     <main className="mx-auto flex w-full max-w-5xl flex-col gap-16 px-4 py-12 sm:px-6 sm:py-16">
       <section className="flex flex-col items-center gap-6 text-center">
         <span className="rounded-full border bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground">
-          Smart Resume Analyze
+          <SiteName />
         </span>
         <h1 className="max-w-3xl text-4xl font-semibold tracking-tight sm:text-6xl">
           Nilai resume-mu sebelum dikirim.

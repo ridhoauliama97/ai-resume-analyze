@@ -23,6 +23,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { useSiteSettings } from '@/components/site-settings-provider';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/toast';
 import type { SiteSettings } from '@/lib/db/queries';
@@ -43,6 +44,7 @@ export function SettingsForm({
   currentModel: string;
 }) {
   const router = useRouter();
+  const { setSettings } = useSiteSettings();
   const [siteName, setSiteName] = useState(initialSettings.siteName);
   const [logoUrl, setLogoUrl] = useState(initialSettings.logoUrl);
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -140,6 +142,7 @@ export function SettingsForm({
 
       setLogoUrl(settings.logoUrl);
       setLogoPreview(settings.logoUrl);
+      setSettings(settings);
       setLogoState(settings.logoUrl ? 'done' : 'idle');
       setLogoFile(null);
       setRemoveLogo(false);

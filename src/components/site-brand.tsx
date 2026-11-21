@@ -1,37 +1,10 @@
 'use client';
 
 import { FileText } from 'lucide-react';
-import { useEffect, useState } from 'react';
-
-type SiteSettings = {
-  siteName: string;
-  logoUrl: string | null;
-};
-
-const DEFAULT_SETTINGS: SiteSettings = {
-  siteName: 'Smart Resume Analyze',
-  logoUrl: null,
-};
+import { useSiteSettings } from '@/components/site-settings-provider';
 
 export function SiteBrand() {
-  const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SETTINGS);
-
-  useEffect(() => {
-    let active = true;
-
-    fetch('/api/settings')
-      .then((response) => (response.ok ? response.json() : null))
-      .then((data: { settings?: SiteSettings } | null) => {
-        if (active && data?.settings) {
-          setSettings(data.settings);
-        }
-      })
-      .catch(() => undefined);
-
-    return () => {
-      active = false;
-    };
-  }, []);
+  const { settings } = useSiteSettings();
 
   return (
     <span className="inline-flex min-w-0 items-center gap-2">

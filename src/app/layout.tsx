@@ -6,6 +6,8 @@ import Link from "next/link";
 import { CopyrightYear } from "@/components/copyright-year";
 import { GithubIcon } from "@/components/github-icon";
 import { SiteHeader } from "@/components/site-header";
+import { SiteName } from "@/components/site-name";
+import { SiteSettingsProvider } from "@/components/site-settings-provider";
 import { Toaster } from "@/components/ui/toast";
 import "./globals.css";
 
@@ -49,44 +51,45 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="id" className={`${roboto.variable} h-full antialiased`}>
       <body className={`${roboto.className} min-h-full flex flex-col`}>
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:ring-2 focus:ring-ring"
-        >
-          Lewati ke konten utama
-        </a>
-        <SiteHeader />
-        <div id="main-content" tabIndex={-1} className="flex flex-1 flex-col">
-          {children}
-        </div>
-        <footer data-app-chrome className="border-t">
-          <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
-            <p>
-              &copy; <CopyrightYear /> Smart Resume Analyze v0.1.0. All rights
-              reserved.
-            </p>
-            <Link
-              href="/privacy"
-              className="underline underline-offset-4 hover:text-foreground"
-            >
-              Pemberitahuan privasi
-            </Link>
-            <p>
-              <a
-                href="https://github.com/ridhoauliama97/ai-resume-analyze"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="GitHub repository"
-                title="GitHub repository"
-                className="inline-flex items-center gap-1.5 hover:text-foreground"
-              >
-                <GithubIcon className="size-3.5" />
-              </a>
-            </p>
+        <SiteSettingsProvider>
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:ring-2 focus:ring-ring"
+          >
+            Lewati ke konten utama
+          </a>
+          <SiteHeader />
+          <div id="main-content" tabIndex={-1} className="flex flex-1 flex-col">
+            {children}
           </div>
-        </footer>
-        <Toaster />
-        <Analytics />
+          <footer data-app-chrome className="border-t">
+            <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
+              <p>
+                &copy; <CopyrightYear /> <SiteName /> v0.1.0. All rights reserved.
+              </p>
+              <Link
+                href="/privacy"
+                className="underline underline-offset-4 hover:text-foreground"
+              >
+                Pemberitahuan privasi
+              </Link>
+              <p>
+                <a
+                  href="https://github.com/ridhoauliama97/ai-resume-analyze"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="GitHub repository"
+                  title="GitHub repository"
+                  className="inline-flex items-center gap-1.5 hover:text-foreground"
+                >
+                  <GithubIcon className="size-3.5" />
+                </a>
+              </p>
+            </div>
+          </footer>
+          <Toaster />
+          <Analytics />
+        </SiteSettingsProvider>
       </body>
     </html>
   );
