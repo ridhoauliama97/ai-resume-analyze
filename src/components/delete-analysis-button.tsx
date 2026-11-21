@@ -2,9 +2,16 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export function DeleteAnalysisButton({ analysisId }: { analysisId: string }) {
+export function DeleteAnalysisButton({
+  analysisId,
+  compact = false,
+}: {
+  analysisId: string;
+  compact?: boolean;
+}) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,15 +46,23 @@ export function DeleteAnalysisButton({ analysisId }: { analysisId: string }) {
   }
 
   return (
-    <div className="flex flex-col items-start gap-2">
+    <div className={compact ? 'inline-flex' : 'flex flex-col items-start gap-2'}>
       <Button
         type="button"
         variant="destructive"
-        size="sm"
+        size={compact ? 'icon-sm' : 'sm'}
         onClick={onDelete}
         disabled={pending}
+        aria-label={compact ? 'Hapus analisis' : undefined}
+        title={compact ? 'Hapus analisis' : undefined}
       >
-        {pending ? 'Menghapus...' : 'Hapus analisis'}
+        {compact ? (
+          <Trash2 aria-hidden="true" className="size-3.5" />
+        ) : pending ? (
+          'Menghapus...'
+        ) : (
+          'Hapus analisis'
+        )}
       </Button>
       {error ? (
         <p role="alert" className="text-sm text-destructive">

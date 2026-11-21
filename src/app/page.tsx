@@ -25,7 +25,7 @@ const FEATURES = [
 
 export default function Home() {
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-4 py-12 sm:py-16">
+    <main className="mx-auto flex w-full max-w-5xl flex-col gap-16 px-4 py-12 sm:px-6 sm:py-16">
       <section className="flex flex-col items-center gap-6 text-center">
         <span className="rounded-full border bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground">
           AI Resume Analyzer
@@ -65,7 +65,9 @@ export default function Home() {
               aria-hidden="true"
             />
             <h2 className="text-base font-semibold">{feature.title}</h2>
-            <p className="text-sm text-muted-foreground">{feature.description}</p>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {feature.description}
+            </p>
           </div>
         ))}
       </section>

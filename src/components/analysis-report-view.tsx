@@ -96,18 +96,13 @@ export function AnalysisReportView({
       <header className="flex flex-col gap-3">
         <nav className="flex flex-wrap gap-4 text-sm">
           {admin ? (
-            <Link href="/admin" className="underline underline-offset-4">
+            <Link href="/admin" className="underline underline-offset-4 hover:text-foreground">
               ← Kembali ke dashboard admin
             </Link>
           ) : (
-            <>
-              <Link href="/history" className="underline underline-offset-4">
-                ← Kembali ke riwayat
-              </Link>
-              <Link href="/" className="underline underline-offset-4">
-                Analisis lagi
-              </Link>
-            </>
+            <Link href="/" className="underline underline-offset-4 hover:text-foreground">
+              ← Beranda
+            </Link>
           )}
         </nav>
         <div className="flex flex-col gap-1">
@@ -122,10 +117,10 @@ export function AnalysisReportView({
       </header>
 
       <Card>
-        <CardContent className="flex flex-col items-center gap-6 py-2 sm:flex-row sm:items-center sm:justify-between">
+        <CardContent className="grid gap-8 py-4 sm:grid-cols-[200px_minmax(0,1fr)] sm:items-center">
           <ScoreGauge score={analysis.overallScore} band={analysis.band} label={bandLabel} />
 
-          <div className="flex max-w-md flex-col gap-3 text-center sm:text-left">
+          <div className="flex max-w-xl flex-col gap-3 text-center sm:text-left">
             <div className="flex flex-wrap justify-center gap-2 sm:justify-start">
               <Badge className={bandClass(analysis.band)}>{bandLabel}</Badge>
               <Badge variant="outline">Skor total {formatScore(analysis.overallScore)}</Badge>
@@ -139,38 +134,40 @@ export function AnalysisReportView({
             </p>
 
             {analysis.jobLayerStatus === 'inferred' ? (
-              <p className="rounded-md bg-amber-500/10 px-3 py-2 text-sm text-amber-800 dark:text-amber-300">
+              <p className="rounded-md bg-amber-500/10 px-3 py-2 text-sm leading-relaxed text-amber-800 dark:text-amber-300">
                 Penilaian job-specific ini bersifat perkiraan berdasarkan ekspektasi pasar dan
                 pengetahuan umum tentang peran, karena job description tidak diberikan.
               </p>
             ) : null}
 
             {analysis.jobLayerStatus === 'unavailable' ? (
-              <p className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
+              <p className="rounded-md bg-muted px-3 py-2 text-sm leading-relaxed text-muted-foreground">
                 Penilaian job-specific tidak tersedia. Skor total dihitung dari lapis global saja.
               </p>
             ) : null}
 
             {result.jobLayerNote && analysis.jobLayerStatus !== 'none' ? (
-              <p className="text-sm text-muted-foreground">{result.jobLayerNote}</p>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {result.jobLayerNote}
+              </p>
             ) : null}
 
             {analysis.jobLayerStatus === 'none' ? (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm leading-relaxed text-muted-foreground">
                 Tambahkan posisi target atau job description saat menganalisis untuk mendapat skor
                 job-specific.
               </p>
             ) : null}
+
+            <div className="flex flex-wrap justify-center gap-2 pt-1 sm:justify-start print:hidden">
+              <DownloadReportButton />
+              <CopyImprovementPromptButton analysis={analysis} />
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      <div className="flex flex-wrap gap-2 print:hidden">
-        <DownloadReportButton />
-        <CopyImprovementPromptButton analysis={analysis} />
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid items-start gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Rincian skor global</CardTitle>
@@ -248,7 +245,7 @@ export function AnalysisReportView({
         )}
       </section>
 
-      <Card>
+      <Card className="print:hidden">
         <CardHeader>
           <CardTitle>Feedback keseluruhan</CardTitle>
           <CardDescription>
@@ -260,7 +257,7 @@ export function AnalysisReportView({
         </CardContent>
       </Card>
 
-      <section className="flex flex-wrap items-center gap-3 border-t pt-6">
+      <section className="flex flex-wrap items-center gap-3 border-t pt-6 print:hidden">
         {!admin ? (
           <>
             <Link href="/" className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}>

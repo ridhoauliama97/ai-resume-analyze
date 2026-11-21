@@ -66,37 +66,37 @@ async function AdminDashboard() {
                 <th className="px-4 py-3 font-medium">Skor</th>
                 <th className="px-4 py-3 font-medium">Band</th>
                 <th className="px-4 py-3 font-medium">Dataset</th>
-                <th className="px-4 py-3 font-medium">Aksi</th>
+                <th className="min-w-[140px] px-4 py-3 font-medium">Aksi</th>
               </tr>
             </thead>
             <tbody>
               {analyses.map((analysis) => (
                 <tr key={analysis.id} className="border-t">
                   <td className="px-4 py-3 font-medium">{analysis.fileName}</td>
-                  <td className="px-4 py-3 text-muted-foreground">
+                  <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
                     {formatDateId(analysis.createdAt.toISOString())}
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">
                     {analysis.targetPosition || '—'}
                   </td>
-                  <td className="px-4 py-3 tabular-nums">
+                  <td className="whitespace-nowrap px-4 py-3 tabular-nums">
                     {formatScore(analysis.overallScore)}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="whitespace-nowrap px-4 py-3">
                     <Badge className={bandClass(analysis.band)}>{formatBand(analysis.band)}</Badge>
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">
+                  <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
                     {analysis.datasetConsent ? 'Ya' : 'Tidak'}
                   </td>
-                  <td className="px-4 py-3">
-                    <div className="flex flex-wrap gap-2">
+                  <td className="min-w-[140px] px-4 py-3">
+                    <div className="flex flex-nowrap items-center gap-2">
                       <Link
                         href={`/admin/analyses/${analysis.id}`}
                         className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
                       >
                         Lihat
                       </Link>
-                      <DeleteAnalysisButton analysisId={analysis.id} />
+                      <DeleteAnalysisButton analysisId={analysis.id} compact />
                     </div>
                   </td>
                 </tr>
@@ -111,7 +111,7 @@ async function AdminDashboard() {
 
 export default function AdminPage() {
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-10">
+    <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">
       <Suspense fallback={<DashboardSkeleton />}>
         <AdminDashboard />
       </Suspense>

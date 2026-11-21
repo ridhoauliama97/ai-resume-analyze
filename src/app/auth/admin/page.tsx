@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
@@ -40,7 +41,10 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-col gap-6 px-4 py-16">
+    <main className="mx-auto flex w-full max-w-md flex-col gap-6 px-4 py-16 sm:px-6">
+      <Link href="/" className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
+        ← Beranda
+      </Link>
       <Card>
         <CardHeader>
           <CardTitle>Login admin</CardTitle>

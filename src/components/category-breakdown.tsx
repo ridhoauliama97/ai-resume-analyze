@@ -65,8 +65,8 @@ export function CategoryBreakdown({
                 style={{ width: `${score}%` }}
               />
             </div>
-            <p className="text-sm text-muted-foreground">{category.reason}</p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm leading-relaxed text-muted-foreground">{category.reason}</p>
+            <p className="text-xs leading-relaxed text-muted-foreground">
               <span className="font-medium text-foreground/80">Bukti:</span> {category.evidence}
             </p>
           </li>

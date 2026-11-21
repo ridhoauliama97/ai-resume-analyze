@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-10">
+    <main className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
       <div className="flex flex-col gap-6">
         <header className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -27,7 +27,9 @@ export default function PrivacyPage() {
                 <CardTitle className="text-base">{section.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">{section.body}</p>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {section.body}
+                </p>
               </CardContent>
             </Card>
           ))}

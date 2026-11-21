@@ -79,21 +79,21 @@ export function RecommendationCard({
         <CardTitle className="text-base">{recommendation.title}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        <p className="text-sm">{recommendation.detail}</p>
+        <p className="text-sm leading-relaxed">{recommendation.detail}</p>
         {recommendation.evidence ? (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm leading-relaxed text-muted-foreground">
             <span className="font-medium text-foreground/80">Bukti:</span>{' '}
             {recommendation.evidence}
           </p>
         ) : null}
         {recommendation.example ? (
-          <p className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
+          <p className="rounded-md bg-muted px-3 py-2 text-sm leading-relaxed text-muted-foreground">
             <span className="font-medium text-foreground/80">Contoh:</span>{' '}
             {recommendation.example}
           </p>
         ) : null}
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 print:hidden">
           <span className="text-xs text-muted-foreground">Apakah saran ini berguna?</span>
           <Button
             type="button"

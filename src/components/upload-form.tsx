@@ -119,6 +119,7 @@ export function UploadForm() {
               type="file"
               accept=".pdf,.docx,.doc,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               onChange={onFileChange}
+              className="file:mr-3 file:rounded-md file:border file:border-input file:bg-muted file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-foreground hover:file:bg-accent"
             />
             <p className="text-xs text-muted-foreground">
               {file ? file.name : 'PDF, DOCX, atau DOC — maksimal 10 MB.'}
@@ -151,7 +152,7 @@ export function UploadForm() {
           </div>
 
           <div className="flex flex-col gap-3 rounded-lg border bg-muted/40 p-4">
-            <label className="flex items-start gap-3 text-sm">
+            <label className="flex items-start gap-3 text-sm leading-relaxed">
               <Checkbox
                 aria-label="Persetujuan pemrosesan dan penyimpanan"
                 checked={consent}
@@ -159,16 +160,19 @@ export function UploadForm() {
                 className="mt-0.5"
               />
               <span>
-                Saya menyetujui resume diproses oleh layanan AI dan disimpan di riwayat
-                analisis saya. Lihat{' '}
-                <a href="/privacy" className="underline underline-offset-4">
+                Saya menyetujui resume diproses oleh layanan AI dan report analisis
+                disimpan agar bisa saya buka kembali. Lihat{' '}
+                <a
+                  href="/privacy"
+                  className="underline underline-offset-4 hover:text-foreground"
+                >
                   pemberitahuan privasi
                 </a>
                 .
               </span>
             </label>
 
-            <label className="flex items-start gap-3 text-sm">
+            <label className="flex items-start gap-3 text-sm leading-relaxed">
               <Checkbox
                 aria-label="Izin penggunaan dataset"
                 checked={datasetConsent}

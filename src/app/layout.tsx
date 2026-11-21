@@ -58,10 +58,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           {children}
         </div>
         <footer className="border-t">
-          <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <p>
-              © 2026 Analisis Resume AI. Hasil analisis bersifat saran, bukan jaminan
-              lolos seleksi.
+              &copy; 2026. Smart Resume Analyze. Hasil analisis bersifat saran,
+              bukan jaminan lolos seleksi.
             </p>
             <nav aria-label="Tautan footer">
               <ul className="flex flex-wrap items-center gap-4">
@@ -88,8 +88,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             </nav>
           </div>
           <div className="border-t">
-            <div className="mx-auto w-full max-w-5xl px-4 py-4 text-xs text-muted-foreground">
-              Build &amp; Maintained by{' '}
+            <div className="mx-auto w-full max-w-5xl px-4 py-4 text-xs text-muted-foreground sm:px-6">
+              Build &amp; Maintained by{" "}
               <span className="font-medium text-foreground">
                 Ridho Aulia Mahqoma Angkat
               </span>

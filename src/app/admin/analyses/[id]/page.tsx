@@ -33,7 +33,7 @@ async function AdminReport({ params }: { params: Promise<{ id: string }> }) {
 
 export default function AdminAnalysisPage({ params }: { params: Promise<{ id: string }> }) {
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-10">
+    <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">
       <Suspense fallback={<ReportSkeleton />}>
         <AdminReport params={params} />
       </Suspense>
