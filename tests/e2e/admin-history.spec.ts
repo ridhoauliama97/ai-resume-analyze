@@ -8,7 +8,7 @@ test('admin dashboard and history table support search and bulk delete', async (
   await page
     .getByRole('checkbox', { name: 'Persetujuan pemrosesan dan penyimpanan' })
     .check();
-  await page.getByRole('button', { name: 'Analisis Resume' }).click();
+  await page.getByRole('button', { name: 'Lihat skor resume saya' }).click();
   await page.waitForURL(/\/analysis\/[0-9a-f-]+$/);
 
   await page.goto('/auth/admin');

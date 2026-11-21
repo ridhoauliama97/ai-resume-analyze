@@ -33,7 +33,7 @@ test('requires consent before submit', async () => {
   render(<UploadForm />);
 
   await user.upload(screen.getByLabelText(/berkas resume/i), pdfFile());
-  await user.click(screen.getByRole('button', { name: 'Analisis Resume' }));
+  await user.click(screen.getByRole('button', { name: 'Lihat skor resume saya' }));
 
   expect(await screen.findByText(/Persetujuan diperlukan/i)).toBeTruthy();
   expect(fetchMock).not.toHaveBeenCalled();
@@ -53,7 +53,7 @@ test('submits file and redirects', async () => {
   await user.type(screen.getByLabelText(/posisi target/i), 'Frontend Engineer');
   await user.click(screen.getByRole('checkbox', { name: /persetujuan pemrosesan/i }));
   await user.click(screen.getByRole('checkbox', { name: /dataset/i }));
-  await user.click(screen.getByRole('button', { name: 'Analisis Resume' }));
+  await user.click(screen.getByRole('button', { name: 'Lihat skor resume saya' }));
 
   await waitFor(() => {
     expect(push).toHaveBeenCalledWith('/analysis/abc');
@@ -82,7 +82,7 @@ test('shows an API error without redirecting', async () => {
 
   await user.upload(screen.getByLabelText(/berkas resume/i), pdfFile());
   await user.click(screen.getByRole('checkbox', { name: /persetujuan pemrosesan/i }));
-  await user.click(screen.getByRole('button', { name: 'Analisis Resume' }));
+  await user.click(screen.getByRole('button', { name: 'Lihat skor resume saya' }));
 
   expect(await screen.findByText('Resume tidak bisa dibaca')).toBeTruthy();
   expect(push).not.toHaveBeenCalled();

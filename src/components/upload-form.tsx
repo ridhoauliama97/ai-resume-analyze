@@ -173,10 +173,9 @@ export function UploadForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Analisis resume</CardTitle>
+        <CardTitle>Cek resume</CardTitle>
         <CardDescription>
-          Unggah PDF/DOCX/DOC maksimal 10 MB. Tambahkan posisi target atau job description
-          untuk penilaian yang lebih spesifik.
+          PDF, DOCX, atau DOC, maksimal 10 MB. Posisi target dan job description opsional.
         </CardDescription>
       </CardHeader>
       <form onSubmit={onSubmit} noValidate>
@@ -328,7 +327,7 @@ export function UploadForm() {
 
         <CardFooter className="mt-4 justify-end">
           <Button type="submit" disabled={pending} className="w-full sm:w-auto">
-            {pending ? 'Menganalisis...' : 'Analisis Resume'}
+            {pending ? 'Menganalisis...' : 'Lihat skor resume saya'}
           </Button>
         </CardFooter>
       </form>

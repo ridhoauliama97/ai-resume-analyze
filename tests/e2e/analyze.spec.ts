@@ -11,7 +11,7 @@ test("analyzes a resume, saves a vote, and deletes it", async ({ page }) => {
     .getByRole("checkbox", { name: "Persetujuan pemrosesan dan penyimpanan" })
     .check();
   await page.getByRole("checkbox", { name: "Izin penggunaan dataset" }).check();
-  await page.getByRole("button", { name: "Analisis Resume" }).click();
+  await page.getByRole("button", { name: "Lihat skor resume saya" }).click();
 
   await page.waitForURL(/\/analysis\/[0-9a-f-]+$/);
   await expect(page.getByText("Skor total 79/100")).toBeVisible();
