@@ -38,7 +38,7 @@ jobs:
       CLIENT_TOKEN_PEPPER: ci-pepper-2026
       ADMIN_USERNAME: admin
       ADMIN_PASSWORD: ci-admin-password
-      AI_MOCK: '1'
+      AI_MOCK: '0'
       PLAYWRIGHT_CHANNEL: chromium
 
     steps:
@@ -87,7 +87,7 @@ jobs:
     steps:
       - name: Trigger Vercel production deploy hook
         env:
-          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+          VERCEL_DEPLOY_HOOK: ${{ secrets['VERCEL_DEPLOY_HOOK'] }}
         run: |
           if [ -z "$VERCEL_DEPLOY_HOOK" ]; then
             echo "::warning::VERCEL_DEPLOY_HOOK is not set; skipping deployment. Add it in GitHub repository secrets."
