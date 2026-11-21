@@ -2,7 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ExternalLinkIcon, HistoryIcon, LogOutIcon, SettingsIcon } from 'lucide-react';
+import {
+  ExternalLinkIcon,
+  HistoryIcon,
+  LayoutDashboardIcon,
+  LogOutIcon,
+  SettingsIcon,
+} from 'lucide-react';
 import { SiteBrand } from '@/components/site-brand';
 import {
   Sidebar,
@@ -19,10 +25,17 @@ import {
 
 const NAV_ITEMS = [
   {
-    title: 'Riwayat Analisa',
+    title: 'Dashboard',
     url: '/admin',
+    icon: LayoutDashboardIcon,
+    match: (pathname: string) => pathname === '/admin',
+  },
+  {
+    title: 'Riwayat Analisa',
+    url: '/admin/analyze-history',
     icon: HistoryIcon,
-    match: (pathname: string) => pathname === '/admin' || pathname.startsWith('/admin/analyses/'),
+    match: (pathname: string) =>
+      pathname === '/admin/analyze-history' || pathname.startsWith('/admin/analyses/'),
   },
   {
     title: 'Pengaturan',
@@ -40,7 +53,7 @@ export function AdminSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" render={<Link href="/" />} tooltip="Lihat website">
+            <SidebarMenuButton size="lg" render={<Link href="/admin" />} tooltip="Dashboard">
               <SiteBrand />
             </SidebarMenuButton>
           </SidebarMenuItem>

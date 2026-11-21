@@ -38,7 +38,7 @@ test('admin delete uses the admin endpoint and returns to the dashboard', async 
   expect(fetchMock).toHaveBeenCalledWith('/api/admin/analyses/abc', {
     method: 'DELETE',
   });
-  await waitFor(() => expect(push).toHaveBeenCalledWith('/admin'));
+  await waitFor(() => expect(push).toHaveBeenCalledWith('/admin/analyze-history'));
 });
 
 test('client delete uses the client endpoint and returns to history', async () => {

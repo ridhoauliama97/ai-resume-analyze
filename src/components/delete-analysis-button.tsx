@@ -63,7 +63,7 @@ export function DeleteAnalysisButton({
       );
 
       setOpen(false);
-      router.push(admin ? '/admin' : '/history');
+      router.push(admin ? '/admin/analyze-history' : '/history');
       router.refresh();
     } catch (cause) {
       setError(

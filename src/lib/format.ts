@@ -24,3 +24,16 @@ const DATE_FORMATTER = new Intl.DateTimeFormat('id-ID', {
 export function formatDateId(iso: string): string {
   return DATE_FORMATTER.format(new Date(iso));
 }
+
+const DATE_TIME_FORMATTER = new Intl.DateTimeFormat('id-ID', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  timeZone: 'Asia/Jakarta',
+});
+
+export function formatDateTimeId(iso: string): string {
+  return DATE_TIME_FORMATTER.format(new Date(iso));
+}

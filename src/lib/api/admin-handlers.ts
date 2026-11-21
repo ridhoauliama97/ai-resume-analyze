@@ -1,12 +1,18 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { ADMIN_COOKIE, verifyAdminSession } from '@/lib/auth/admin';
 import type { Db } from '@/lib/db/client';
 import {
+  deleteAnalysesByIds,
   deleteAnalysisById,
   getAnalysisById,
   listAllAnalyses,
 } from '@/lib/db/queries';
 import type { ResumeStorage } from '@/lib/storage/types';
+
+const bulkDeleteSchema = z.object({
+  ids: z.array(z.string().uuid()).min(1).max(1000),
+});
 
 export type AdminHandlerDeps = {
   db: Db;
@@ -59,6 +65,52 @@ export async function handleAdminGetAnalysis(
   }
 
   return NextResponse.json({ analysis });
+}
+
+export async function handleAdminBulkDeleteAnalyses(
+  request: Request,
+  deps: AdminHandlerDeps,
+): Promise<NextResponse> {
+  if (!isAdminRequest(request)) {
+    return unauthorized();
+  }
+
+  let payload: unknown;
+
+  try {
+    payload = await request.json();
+  } catch {
+    return NextResponse.json(
+      { error: { code: 'invalid_body', message: 'Permintaan hapus tidak valid.' } },
+      { status: 400 },
+    );
+  }
+
+  const parsed = bulkDeleteSchema.safeParse(payload);
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      {
+        error: {
+          code: 'invalid_ids',
+          message: 'Pilih 1–1000 analisis yang valid untuk dihapus.',
+        },
+      },
+      { status: 400 },
+    );
+  }
+
+  const deleted = await deleteAnalysesByIds(deps.db, parsed.data.ids);
+
+  await Promise.all(
+    deleted.map((row) =>
+      row.resumeFileKey
+        ? deps.storage.remove(row.resumeFileKey).catch(() => undefined)
+        : Promise.resolve(),
+    ),
+  );
+
+  return NextResponse.json({ ok: true, deleted: deleted.length });
 }
 
 export async function handleAdminDeleteAnalysis(

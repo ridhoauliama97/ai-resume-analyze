@@ -18,10 +18,13 @@ function currentLabel(pathname: string): string {
   if (pathname === '/admin/settings') {
     return 'Pengaturan';
   }
+  if (pathname === '/admin/analyze-history') {
+    return 'Riwayat Analisa';
+  }
   if (pathname.startsWith('/admin/analyses/')) {
     return 'Detail Analisa';
   }
-  return 'Riwayat Analisa';
+  return 'Dashboard';
 }
 
 export function AdminHeader() {

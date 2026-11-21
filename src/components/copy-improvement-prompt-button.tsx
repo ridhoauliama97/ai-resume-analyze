@@ -59,7 +59,7 @@ export function CopyImprovementPromptButton({
       variant="outline"
       size="sm"
       onClick={onCopy}
-      aria-label="Salin prompt perbaikan"
+      aria-label="Copy prompts"
     >
       {icon}
       {label}

@@ -1,13 +1,24 @@
-import { handleAdminListAnalyses } from '@/lib/api/admin-handlers';
+import {
+  handleAdminBulkDeleteAnalyses,
+  handleAdminListAnalyses,
+} from '@/lib/api/admin-handlers';
 import { getDb } from '@/lib/db/client';
 import { getServerEnv } from '@/lib/env';
 import { createResumeStorageFromEnv } from '@/lib/storage';
 
-export async function GET(request: Request) {
+function deps() {
   const env = getServerEnv();
 
-  return handleAdminListAnalyses(request, {
+  return {
     db: getDb(),
     storage: createResumeStorageFromEnv(env),
-  });
+  };
+}
+
+export async function GET(request: Request) {
+  return handleAdminListAnalyses(request, deps());
+}
+
+export async function DELETE(request: Request) {
+  return handleAdminBulkDeleteAnalyses(request, deps());
 }

@@ -14,6 +14,9 @@ const envSchema = z.object({
   SUPABASE_S3_SECRET_ACCESS_KEY: z.string().min(1),
   SUPABASE_STORAGE_BUCKET: z.string().min(1).default('resumes'),
   AI_MOCK: z.enum(['0', '1']).optional(),
+  VERCEL_TOKEN: z.string().min(1).optional(),
+  VERCEL_PROJECT_ID: z.string().min(1).optional(),
+  VERCEL_TEAM_ID: z.string().min(1).optional(),
   NODE_ENV: z.enum(['development', 'test', 'production']).optional(),
 });
 

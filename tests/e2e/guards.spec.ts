@@ -30,7 +30,7 @@ test('privacy notice names Gemini and Tavily', async ({ page }) => {
   await expect(page.getByText(/Tavily/)).toBeVisible();
 });
 
-test('admin can log in and open the dashboard', async ({ page }) => {
+test('admin can log in, open the dashboard, and browse history', async ({ page }) => {
   await page.goto('/auth/admin');
 
   await page.getByLabel('Username').fill('admin');
@@ -38,6 +38,13 @@ test('admin can log in and open the dashboard', async ({ page }) => {
   await page.getByRole('button', { name: 'Masuk' }).click();
 
   await page.waitForURL('/admin');
+  await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
+  await expect(page.locator('[data-sidebar="header"] a').first()).toHaveAttribute(
+    'href',
+    '/admin',
+  );
+  await page.getByRole('link', { name: 'Riwayat Analisa' }).click();
+  await page.waitForURL('/admin/analyze-history');
   await expect(page.getByRole('heading', { name: 'Riwayat Analisa' })).toBeVisible();
 });
 

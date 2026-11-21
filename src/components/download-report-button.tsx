@@ -23,7 +23,7 @@ export function DownloadReportButton() {
       size="sm"
       onClick={onDownload}
       disabled={printing}
-      aria-label="Unduh laporan"
+      aria-label="Download result"
     >
       <DownloadIcon data-icon="inline-start" aria-hidden="true" />
       {printing ? "Membuka..." : "Download result"}

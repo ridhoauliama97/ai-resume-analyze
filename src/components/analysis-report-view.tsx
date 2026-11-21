@@ -96,8 +96,11 @@ export function AnalysisReportView({
       <header className="flex flex-col gap-3">
         <nav className="flex flex-wrap gap-4 text-sm">
           {admin ? (
-            <Link href="/admin" className="underline underline-offset-4 hover:text-foreground">
-              ← Kembali ke dashboard admin
+            <Link
+              href="/admin/analyze-history"
+              className="underline underline-offset-4 hover:text-foreground"
+            >
+              ← Kembali ke riwayat analisa
             </Link>
           ) : (
             <Link href="/" className="underline underline-offset-4 hover:text-foreground">

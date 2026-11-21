@@ -1,4 +1,4 @@
-import { and, desc, eq } from 'drizzle-orm';
+import { and, avg, count, countDistinct, desc, eq, inArray, sql } from 'drizzle-orm';
 import type { AiResult } from '@/lib/ai/schema';
 import type { Band } from '@/lib/types';
 import type { Db } from './client';
@@ -56,6 +56,26 @@ export type AnalysisSummary = Pick<
   Analysis,
   'id' | 'fileName' | 'targetPosition' | 'overallScore' | 'band' | 'createdAt'
 >;
+
+export type AdminAnalysisListItem = Pick<
+  Analysis,
+  | 'id'
+  | 'fileName'
+  | 'targetPosition'
+  | 'overallScore'
+  | 'band'
+  | 'datasetConsent'
+  | 'createdAt'
+>;
+
+export type AdminDashboardStats = {
+  totalAnalyses: number;
+  totalClients: number;
+  last24Hours: number;
+  last7Days: number;
+  datasetConsents: number;
+  averageScore: number | null;
+};
 
 export type NewAnalysisRecord = {
   clientId: string;
@@ -234,6 +254,89 @@ export async function getAnalysisById(db: Db, id: string): Promise<AnalysisDetai
 
 export async function listAllAnalyses(db: Db): Promise<Analysis[]> {
   return db.select().from(analyses).orderBy(desc(analyses.createdAt));
+}
+
+export async function listAnalysesForAdmin(db: Db): Promise<AdminAnalysisListItem[]> {
+  return db
+    .select({
+      id: analyses.id,
+      fileName: analyses.fileName,
+      targetPosition: analyses.targetPosition,
+      overallScore: analyses.overallScore,
+      band: analyses.band,
+      datasetConsent: analyses.datasetConsent,
+      createdAt: analyses.createdAt,
+    })
+    .from(analyses)
+    .orderBy(desc(analyses.createdAt));
+}
+
+export async function listRecentAnalyses(
+  db: Db,
+  limit = 5,
+): Promise<AdminAnalysisListItem[]> {
+  return db
+    .select({
+      id: analyses.id,
+      fileName: analyses.fileName,
+      targetPosition: analyses.targetPosition,
+      overallScore: analyses.overallScore,
+      band: analyses.band,
+      datasetConsent: analyses.datasetConsent,
+      createdAt: analyses.createdAt,
+    })
+    .from(analyses)
+    .orderBy(desc(analyses.createdAt))
+    .limit(limit);
+}
+
+export async function getAdminDashboardStats(db: Db): Promise<AdminDashboardStats> {
+  const now = Date.now();
+  const last24Hours = new Date(now - 24 * 60 * 60 * 1000).toISOString();
+  const last7Days = new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  const [analysisStats] = await db
+    .select({
+      totalAnalyses: count(),
+      totalClients: countDistinct(analyses.clientId),
+      last24Hours: count(
+        sql`case when ${analyses.createdAt} >= ${last24Hours} then 1 end`,
+      ),
+      last7Days: count(
+        sql`case when ${analyses.createdAt} >= ${last7Days} then 1 end`,
+      ),
+      datasetConsents: count(
+        sql`case when ${analyses.datasetConsent} then 1 end`,
+      ),
+      averageScore: avg(analyses.overallScore),
+    })
+    .from(analyses);
+
+  return {
+    totalAnalyses: analysisStats.totalAnalyses,
+    totalClients: analysisStats.totalClients,
+    last24Hours: analysisStats.last24Hours,
+    last7Days: analysisStats.last7Days,
+    datasetConsents: analysisStats.datasetConsents,
+    averageScore:
+      analysisStats.averageScore === null
+        ? null
+        : Math.round(Number(analysisStats.averageScore)),
+  };
+}
+
+export async function deleteAnalysesByIds(
+  db: Db,
+  ids: string[],
+): Promise<Array<{ id: string; resumeFileKey: string | null }>> {
+  if (ids.length === 0) {
+    return [];
+  }
+
+  return db
+    .delete(analyses)
+    .where(inArray(analyses.id, ids))
+    .returning({ id: analyses.id, resumeFileKey: analyses.resumeFileKey });
 }
 
 export async function deleteAnalysisForClient(

@@ -16,9 +16,12 @@ yang tersimpan di PostgreSQL untuk peningkatan kualitas penilaian.
 - Rekomendasi perbaikan dengan prioritas, bukti, dan contoh; vote thumbs up/down
   per rekomendasi dan komentar keseluruhan.
 - Riwayat anonim per browser (cookie), tanpa login. Non-admin tidak melihat daftar
-  riwayat; admin dapat melihat seluruh riwayat di `/admin` (login `/auth/admin`).
-- Dashboard admin memakai sidebar dengan menu **Riwayat Analisa** dan **Pengaturan**
-  (nama website, logo/icon, serta placeholder pengaturan AI).
+  riwayat; admin dapat melihat seluruh riwayat di `/admin/analyze-history` (login
+  `/auth/admin`).
+- Dashboard admin memakai sidebar dengan menu **Dashboard**, **Riwayat Analisa**,
+  dan **Pengaturan**. Halaman `/admin` menampilkan ringkasan analisa dan web
+  analytics; halaman riwayat memakai data table dengan pencarian, sorting,
+  pilihan baris, bulk delete, dan pagination 10/25/50/100 baris.
 - Report memiliki tombol unduh (cetak/save as PDF) dan salin prompt perbaikan resume.
 - Halaman privasi yang menjelaskan pemrosesan Gemini/Tavily, retensi, izin dataset
   opsional, dan cara menghapus data.
@@ -201,6 +204,8 @@ Jalankan setelah perubahan prompt/model dengan API asli:
      `SUPABASE_STORAGE_BUCKET` — kredensial S3 server-side dan bucket privat
    - `DB_MAX_CONNECTIONS=3`
    - `AI_MOCK=0`
+   - `VERCEL_TOKEN` dan `VERCEL_TEAM_ID` — opsional, untuk widget web analytics
+     di dashboard admin (`VERCEL_PROJECT_ID` tersedia otomatis di Vercel).
 4. Deploy. Buka `/auth/admin`, login, lalu cek `/admin`.
 
 `postgres-js` dikonfigurasi dengan `prepare: false` agar kompatibel dengan
@@ -214,7 +219,10 @@ akses ke dashboard riwayat; tidak ada registrasi user biasa.
 > production.
 
 Web Analytics aktif di project Vercel dan dirender lewat `@vercel/analytics`
-di root layout.
+di root layout. Dashboard admin dapat menampilkan page views dan pengunjung unik
+lewat Vercel Web Analytics API bila `VERCEL_TOKEN` diset. `VERCEL_PROJECT_ID`
+tersedia otomatis di Vercel; `VERCEL_TEAM_ID` diisi untuk project tim. Tanpa
+token, widget web analytics menampilkan panduan integrasi.
 
 ### CI/CD dengan GitHub Actions
 
