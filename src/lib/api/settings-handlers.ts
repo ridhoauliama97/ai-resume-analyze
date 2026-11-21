@@ -6,11 +6,26 @@ import { isAdminRequest } from './admin-handlers';
 import type { ResumeStorage } from '@/lib/storage/types';
 
 const MAX_LOGO_BYTES = 2 * 1024 * 1024;
+const VERSION_PATTERN = /^\d+(?:\.\d+){0,2}(?:[-+][0-9A-Za-z.-]+)?$/;
 const LOGO_MIME: Record<string, string> = {
   'image/png': 'png',
   'image/jpeg': 'jpg',
   'image/webp': 'webp',
 };
+
+function normalizeAppVersion(value: string): string | null {
+  const normalized = value.trim().replace(/^v/i, '');
+
+  if (
+    normalized.length === 0 ||
+    normalized.length > 32 ||
+    !VERSION_PATTERN.test(normalized)
+  ) {
+    return null;
+  }
+
+  return normalized;
+}
 
 export type SettingsHandlerDeps = {
   db: Db;
@@ -58,6 +73,20 @@ export async function handleUpdateSettings(
   }
 
   const current = await getSiteSettings(deps.db);
+  const appVersionInput = form.get('appVersion');
+  const appVersion =
+    appVersionInput === null
+      ? current.appVersion
+      : normalizeAppVersion(String(appVersionInput));
+
+  if (!appVersion) {
+    return errorResponse(
+      400,
+      'invalid_app_version',
+      'Versi sistem harus berupa angka, misalnya 0.1.0.',
+    );
+  }
+
   const logo = form.get('logo');
   const removeLogo = form.get('removeLogo') === 'true';
   let logoUrl = removeLogo ? null : current.logoUrl;
@@ -88,7 +117,11 @@ export async function handleUpdateSettings(
   }
 
   try {
-    const settings = await updateSiteSettings(deps.db, { siteName, logoUrl });
+    const settings = await updateSiteSettings(deps.db, {
+      siteName,
+      logoUrl,
+      appVersion,
+    });
 
     const previousKey = keyFromLogoUrl(current.logoUrl);
     if (previousKey && previousKey !== uploadedKey) {

@@ -7,16 +7,22 @@ import { analyses, appSettings, clients, feedback, recommendations } from './sch
 export type SiteSettings = {
   siteName: string;
   logoUrl: string | null;
+  appVersion: string;
 };
 
 const DEFAULT_SITE_SETTINGS: SiteSettings = {
   siteName: 'Smart Resume Analyze',
   logoUrl: null,
+  appVersion: '0.1.0',
 };
 
 export async function getSiteSettings(db: Db): Promise<SiteSettings> {
   const [row] = await db
-    .select({ siteName: appSettings.siteName, logoUrl: appSettings.logoUrl })
+    .select({
+      siteName: appSettings.siteName,
+      logoUrl: appSettings.logoUrl,
+      appVersion: appSettings.appVersion,
+    })
     .from(appSettings)
     .limit(1);
 
@@ -29,16 +35,26 @@ export async function updateSiteSettings(
 ): Promise<SiteSettings> {
   const [row] = await db
     .insert(appSettings)
-    .values({ id: 'default', siteName: input.siteName, logoUrl: input.logoUrl })
+    .values({
+      id: 'default',
+      siteName: input.siteName,
+      logoUrl: input.logoUrl,
+      appVersion: input.appVersion,
+    })
     .onConflictDoUpdate({
       target: appSettings.id,
       set: {
         siteName: input.siteName,
         logoUrl: input.logoUrl,
+        appVersion: input.appVersion,
         updatedAt: new Date(),
       },
     })
-    .returning({ siteName: appSettings.siteName, logoUrl: appSettings.logoUrl });
+    .returning({
+      siteName: appSettings.siteName,
+      logoUrl: appSettings.logoUrl,
+      appVersion: appSettings.appVersion,
+    });
 
   return row;
 }

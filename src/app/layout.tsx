@@ -7,6 +7,7 @@ import { CopyrightYear } from "@/components/copyright-year";
 import { GithubIcon } from "@/components/github-icon";
 import { SiteHeader } from "@/components/site-header";
 import { SiteName } from "@/components/site-name";
+import { SiteVersion } from "@/components/site-version";
 import { SiteSettingsProvider } from "@/components/site-settings-provider";
 import { Toaster } from "@/components/ui/toast";
 import "./globals.css";
@@ -45,6 +46,9 @@ export const metadata: Metadata = {
   },
   description:
     "Nilai resume terhadap standar ATS dan posisi target, lengkap dengan saran perbaikan yang konkret.",
+  icons: {
+    icon: [{ url: "/favicon.ico", sizes: "any" }],
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -65,7 +69,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <footer data-app-chrome className="border-t">
             <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
               <p>
-                &copy; <CopyrightYear /> <SiteName /> v0.1.0. All rights reserved.
+                &copy; <CopyrightYear /> <SiteName /> <SiteVersion />. All rights reserved.
               </p>
               <Link
                 href="/privacy"

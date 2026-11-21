@@ -8,10 +8,13 @@ const ADMIN_COOKIE_VALUE = `${ADMIN_COOKIE}=${createAdminSession('admin')}`;
 
 function form(
   siteName: string,
-  options: { logo?: File; removeLogo?: boolean } = {},
+  options: { logo?: File; removeLogo?: boolean; appVersion?: string | null } = {},
 ): FormData {
   const data = new FormData();
   data.set('siteName', siteName);
+  if (options.appVersion !== null) {
+    data.set('appVersion', options.appVersion ?? '0.1.0');
+  }
   data.set('removeLogo', options.removeLogo ? 'true' : 'false');
   if (options.logo) {
     data.set('logo', options.logo);
@@ -53,13 +56,60 @@ test('updates the site name and returns it publicly', async () => {
 
   expect(response.status).toBe(200);
   expect(await response.json()).toEqual({
-    settings: { siteName: 'Smart Resume Analyze', logoUrl: null },
+    settings: {
+      siteName: 'Smart Resume Analyze',
+      logoUrl: null,
+      appVersion: '0.1.0',
+    },
   });
 
   const publicResponse = await handleGetSettings(testDb);
   expect(await publicResponse.json()).toEqual({
-    settings: { siteName: 'Smart Resume Analyze', logoUrl: null },
+    settings: {
+      siteName: 'Smart Resume Analyze',
+      logoUrl: null,
+      appVersion: '0.1.0',
+    },
   });
+});
+
+test('normalizes and persists the system version', async () => {
+  const response = await handleUpdateSettings(
+    request(
+      form('Brand', { appVersion: 'v2.4.1-beta.1' }),
+      ADMIN_COOKIE_VALUE,
+    ),
+    deps(),
+  );
+
+  expect(response.status).toBe(200);
+  expect(await response.json()).toEqual({
+    settings: {
+      siteName: 'Brand',
+      logoUrl: null,
+      appVersion: '2.4.1-beta.1',
+    },
+  });
+
+  const publicResponse = await handleGetSettings(testDb);
+  expect(await publicResponse.json()).toEqual({
+    settings: {
+      siteName: 'Brand',
+      logoUrl: null,
+      appVersion: '2.4.1-beta.1',
+    },
+  });
+});
+
+test('rejects an invalid system version', async () => {
+  const response = await handleUpdateSettings(
+    request(form('Brand', { appVersion: 'versi-satu' }), ADMIN_COOKIE_VALUE),
+    deps(),
+  );
+
+  expect(response.status).toBe(400);
+  const body = (await response.json()) as { error: { code: string } };
+  expect(body.error.code).toBe('invalid_app_version');
 });
 
 test('uploads a logo and stores its public URL', async () => {

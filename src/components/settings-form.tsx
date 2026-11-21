@@ -46,6 +46,7 @@ export function SettingsForm({
   const router = useRouter();
   const { setSettings } = useSiteSettings();
   const [siteName, setSiteName] = useState(initialSettings.siteName);
+  const [appVersion, setAppVersion] = useState(initialSettings.appVersion);
   const [logoUrl, setLogoUrl] = useState(initialSettings.logoUrl);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(initialSettings.logoUrl);
@@ -58,6 +59,7 @@ export function SettingsForm({
 
   const previewUrlRef = useRef<string | null>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
+  const versionPreview = appVersion.trim().replace(/^v/i, '') || '0.1.0';
 
   useEffect(() => {
     return () => {
@@ -106,6 +108,7 @@ export function SettingsForm({
 
     const form = new FormData();
     form.set('siteName', siteName);
+    form.set('appVersion', appVersion);
     form.set('removeLogo', removeLogo ? 'true' : 'false');
     if (logoFile) {
       form.set('logo', logoFile);
@@ -142,6 +145,7 @@ export function SettingsForm({
 
       setLogoUrl(settings.logoUrl);
       setLogoPreview(settings.logoUrl);
+      setAppVersion(settings.appVersion);
       setSettings(settings);
       setLogoState(settings.logoUrl ? 'done' : 'idle');
       setLogoFile(null);
@@ -166,7 +170,7 @@ export function SettingsForm({
         <CardHeader>
           <CardTitle>Identitas website</CardTitle>
           <CardDescription>
-            Nama dan logo ini dipakai di header publik dan sidebar admin.
+            Nama, logo, dan versi ini dipakai di header, sidebar, dan footer website.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-6">
@@ -181,6 +185,23 @@ export function SettingsForm({
               maxLength={80}
               placeholder="Smart Resume Analyze"
             />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label htmlFor="app-version" className="text-sm font-medium">
+              Versi sistem
+            </label>
+            <Input
+              id="app-version"
+              value={appVersion}
+              onChange={(event) => setAppVersion(event.target.value)}
+              maxLength={32}
+              placeholder="0.1.0"
+              inputMode="text"
+            />
+            <p className="text-xs text-muted-foreground">
+              Ditampilkan sebagai v{versionPreview} di footer website.
+            </p>
           </div>
 
           <div className="flex flex-col gap-2">

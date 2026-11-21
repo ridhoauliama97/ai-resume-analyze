@@ -21,7 +21,8 @@ yang tersimpan di PostgreSQL untuk peningkatan kualitas penilaian.
 - Dashboard admin memakai sidebar dengan menu **Dashboard**, **Riwayat Analisa**,
   dan **Pengaturan**. Halaman `/admin` menampilkan ringkasan analisa dan web
   analytics; halaman riwayat memakai data table dengan pencarian, sorting,
-  pilihan baris, bulk delete, dan pagination 10/25/50/100 baris.
+  pilihan baris, bulk delete, dan pagination 10/25/50/100 baris. Pengaturan
+  mencakup nama website, logo/icon, dan versi sistem yang tampil di footer.
 - Report memiliki tombol unduh (cetak/save as PDF) dan salin prompt perbaikan resume.
 - Halaman privasi yang menjelaskan pemrosesan Gemini/Tavily, retensi, izin dataset
   opsional, dan cara menghapus data.

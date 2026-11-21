@@ -13,6 +13,7 @@ import type { SiteSettings } from '@/lib/db/queries';
 const DEFAULT_SETTINGS: SiteSettings = {
   siteName: 'Smart Resume Analyze',
   logoUrl: null,
+  appVersion: '0.1.0',
 };
 
 type SiteSettingsContextValue = {

@@ -1,0 +1,1 @@
+ALTER TABLE "app_settings" ADD COLUMN "app_version" text DEFAULT '0.1.0' NOT NULL;

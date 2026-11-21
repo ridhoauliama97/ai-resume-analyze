@@ -34,6 +34,7 @@ export const appSettings = pgTable('app_settings', {
   id: text('id').primaryKey().default('default'),
   siteName: text('site_name').notNull().default('Smart Resume Analyze'),
   logoUrl: text('logo_url'),
+  appVersion: text('app_version').notNull().default('0.1.0'),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
