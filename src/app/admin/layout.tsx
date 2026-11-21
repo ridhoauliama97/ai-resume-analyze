@@ -1,21 +1,19 @@
-import { Suspense, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { AdminHeader } from '@/components/admin-header';
 import { AdminSidebar } from '@/components/admin-sidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { TooltipProvider } from '@/components/ui/tooltip';
+
+export const instant = false;
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div data-admin-shell>
       <TooltipProvider>
         <SidebarProvider>
-          <Suspense fallback={<div className="hidden w-64 shrink-0 border-r md:block" />}>
-            <AdminSidebar />
-          </Suspense>
+          <AdminSidebar />
           <SidebarInset>
-            <Suspense fallback={<div className="h-16 shrink-0 border-b" />}>
-              <AdminHeader />
-            </Suspense>
+            <AdminHeader />
             <div className="flex flex-1 flex-col gap-6 p-4">{children}</div>
           </SidebarInset>
         </SidebarProvider>

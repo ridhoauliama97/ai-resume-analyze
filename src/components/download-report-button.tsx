@@ -1,5 +1,6 @@
 "use client";
 
+import { DownloadIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -22,8 +23,10 @@ export function DownloadReportButton() {
       size="sm"
       onClick={onDownload}
       disabled={printing}
+      aria-label="Unduh laporan"
     >
-      {printing ? "Membuka..." : "Unduh laporan"}
+      <DownloadIcon data-icon="inline-start" aria-hidden="true" />
+      {printing ? "Membuka..." : "Download result"}
     </Button>
   );
 }

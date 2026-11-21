@@ -16,6 +16,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/toast';
 
 export function DeleteAnalysisButton({
   analysisId,
@@ -39,18 +40,35 @@ export function DeleteAnalysisButton({
       const endpoint = admin
         ? `/api/admin/analyses/${analysisId}`
         : `/api/analyses/${analysisId}`;
-      const response = await fetch(endpoint, { method: 'DELETE' });
 
-      if (!response.ok) {
-        setError('Analisis gagal dihapus. Coba lagi.');
-        return;
-      }
+      await toast.promise(
+        (async () => {
+          const response = await fetch(endpoint, { method: 'DELETE' });
+
+          if (!response.ok) {
+            const payload = (await response.json().catch(() => null)) as
+              | { error?: { message?: string } }
+              | null;
+            throw new Error(
+              payload?.error?.message ?? 'Analisis gagal dihapus. Coba lagi.',
+            );
+          }
+        })(),
+        {
+          loading: 'Menghapus analisis...',
+          success: 'Analisis dihapus.',
+          error: (cause) =>
+            cause instanceof Error ? cause.message : 'Analisis gagal dihapus. Coba lagi.',
+        },
+      );
 
       setOpen(false);
       router.push(admin ? '/admin' : '/history');
       router.refresh();
-    } catch {
-      setError('Analisis gagal dihapus. Coba lagi.');
+    } catch (cause) {
+      setError(
+        cause instanceof Error ? cause.message : 'Analisis gagal dihapus. Coba lagi.',
+      );
     } finally {
       setPending(false);
     }

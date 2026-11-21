@@ -2,7 +2,17 @@
 
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { ImagePlusIcon } from 'lucide-react';
+import { ImagePlusIcon, XIcon } from 'lucide-react';
+import {
+  Attachment,
+  AttachmentAction,
+  AttachmentActions,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentMedia,
+  AttachmentTitle,
+  AttachmentTrigger,
+} from '@/components/ui/attachment';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,6 +27,14 @@ import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/toast';
 import type { SiteSettings } from '@/lib/db/queries';
 
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024 * 1024) {
+    return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  }
+
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export function SettingsForm({
   initialSettings,
   currentModel,
@@ -29,11 +47,15 @@ export function SettingsForm({
   const [logoUrl, setLogoUrl] = useState(initialSettings.logoUrl);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(initialSettings.logoUrl);
+  const [logoState, setLogoState] = useState<'idle' | 'uploading' | 'processing' | 'error' | 'done'>(
+    initialSettings.logoUrl ? 'done' : 'idle',
+  );
   const [removeLogo, setRemoveLogo] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const previewUrlRef = useRef<string | null>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     return () => {
@@ -61,9 +83,11 @@ export function SettingsForm({
 
   function onLogoChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] ?? null;
+    event.target.value = '';
     setLogoFile(file);
     setRemoveLogo(false);
     setPreviewFromFile(file);
+    setLogoState(file ? 'done' : logoUrl ? 'done' : 'idle');
     setError(null);
   }
 
@@ -71,6 +95,12 @@ export function SettingsForm({
     event.preventDefault();
     setError(null);
     setPending(true);
+    const logoProcessingTimer = logoFile
+      ? window.setTimeout(() => setLogoState('processing'), 700)
+      : null;
+    if (logoFile) {
+      setLogoState('uploading');
+    }
 
     const form = new FormData();
     form.set('siteName', siteName);
@@ -109,13 +139,20 @@ export function SettingsForm({
       );
 
       setLogoUrl(settings.logoUrl);
+      setLogoPreview(settings.logoUrl);
+      setLogoState(settings.logoUrl ? 'done' : 'idle');
       setLogoFile(null);
       setRemoveLogo(false);
-      setPreviewFromFile(null);
       router.refresh();
     } catch (cause) {
+      if (logoFile) {
+        setLogoState('error');
+      }
       setError(cause instanceof Error ? cause.message : 'Gagal menyimpan pengaturan.');
     } finally {
+      if (logoProcessingTimer) {
+        window.clearTimeout(logoProcessingTimer);
+      }
       setPending(false);
     }
   }
@@ -143,12 +180,29 @@ export function SettingsForm({
             />
           </div>
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             <label htmlFor="site-logo" className="text-sm font-medium">
               Logo / icon
             </label>
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex size-16 items-center justify-center overflow-hidden rounded-xl border bg-muted">
+            <Input
+              ref={logoInputRef}
+              id="site-logo"
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              onChange={onLogoChange}
+              className="sr-only"
+            />
+
+            <Attachment
+              state={logoState}
+              aria-busy={logoState === 'uploading' || logoState === 'processing'}
+              className="w-full"
+            >
+              <AttachmentTrigger
+                render={<label htmlFor="site-logo" />}
+                aria-label="Pilih logo"
+              />
+              <AttachmentMedia variant="image">
                 {logoPreview ? (
                   <span
                     aria-hidden="true"
@@ -156,40 +210,64 @@ export function SettingsForm({
                     style={{ backgroundImage: `url(${logoPreview})` }}
                   />
                 ) : (
-                  <ImagePlusIcon
-                    aria-hidden="true"
-                    className="size-6 text-muted-foreground"
-                  />
+                  <ImagePlusIcon aria-hidden="true" />
                 )}
-              </div>
-              <div className="flex flex-col gap-2">
-                <Input
-                  id="site-logo"
-                  type="file"
-                  accept="image/png,image/jpeg,image/webp"
-                  onChange={onLogoChange}
-                  className="file:mr-3 file:rounded-md file:border file:border-input file:bg-muted file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-foreground hover:file:bg-accent"
-                />
-                <p className="text-xs text-muted-foreground">
-                  PNG, JPG, atau WEBP — maksimal 2 MB.
-                </p>
-              </div>
-            </div>
-            {logoUrl ? (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="w-fit"
-                onClick={() => {
-                  setRemoveLogo(true);
-                  setLogoFile(null);
-                  setPreviewFromFile(null);
-                }}
-              >
-                Hapus logo
-              </Button>
-            ) : null}
+              </AttachmentMedia>
+              <AttachmentContent>
+                <AttachmentTitle>
+                  {logoFile
+                    ? logoFile.name
+                    : logoPreview
+                      ? 'Logo saat ini'
+                      : 'Belum ada logo'}
+                </AttachmentTitle>
+                <AttachmentDescription aria-live="polite">
+                  {logoState === 'uploading'
+                    ? 'Mengunggah logo...'
+                    : logoState === 'processing'
+                      ? 'Menyimpan pengaturan...'
+                      : logoState === 'error'
+                        ? 'Logo gagal disimpan. Periksa detail di bawah.'
+                        : logoFile
+                          ? `${formatFileSize(logoFile.size)} · ${logoFile.type}`
+                          : 'PNG, JPG, atau WEBP — maksimal 2 MB.'}
+                </AttachmentDescription>
+              </AttachmentContent>
+              <AttachmentActions className="gap-1">
+                {logoFile || logoPreview ? (
+                  <AttachmentAction
+                    type="button"
+                    onClick={() => logoInputRef.current?.click()}
+                    aria-label="Ganti logo"
+                  >
+                    Ganti
+                  </AttachmentAction>
+                ) : (
+                  <AttachmentAction
+                    type="button"
+                    onClick={() => logoInputRef.current?.click()}
+                    aria-label="Pilih logo"
+                  >
+                    Pilih
+                  </AttachmentAction>
+                )}
+                {(logoFile || logoPreview) && !removeLogo ? (
+                  <AttachmentAction
+                    type="button"
+                    onClick={() => {
+                      setRemoveLogo(true);
+                      setLogoFile(null);
+                      setLogoPreview(null);
+                      setLogoState('idle');
+                    }}
+                    aria-label="Hapus logo"
+                    title="Hapus logo"
+                  >
+                    <XIcon aria-hidden="true" />
+                  </AttachmentAction>
+                ) : null}
+              </AttachmentActions>
+            </Attachment>
           </div>
 
           {error ? (

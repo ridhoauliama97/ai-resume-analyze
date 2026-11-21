@@ -33,6 +33,7 @@ test('analyzes a resume, saves a vote, and deletes it', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Hapus analisis' }).click();
   await page.getByRole('button', { name: 'Hapus' }).click();
+  await expect(page.getByText('Analisis dihapus.')).toBeVisible();
   await page.waitForURL('/');
   await expect(page.getByRole('heading', { name: 'Nilai resume-mu sebelum dikirim.' })).toBeVisible();
 });
